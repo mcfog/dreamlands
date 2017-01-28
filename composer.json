@@ -1,0 +1,28 @@
+{
+  "name": "mcfog/dreamlands",
+  "license": "ISC",
+  "authors": [
+    {
+      "name": "McFog Wang",
+      "email": "mcfogw@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Dreamlands\\": "src"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "dflydev/fig-cookies": "^1.0",
+    "league/plates": "^3.3",
+    "litphp/bolt": "^0.1",
+    "litphp/lit": "dev-master",
+    "litphp/middlewares": "^0.5.0@dev",
+    "symfony/finder": "^3.2",
+    "tedivm/stash": "^0.14",
+    "vlucas/spot2": "^2.2",
+    "yzalis/identicon": "^1.1"
+  }
+}

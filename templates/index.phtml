@@ -1,0 +1,14 @@
+<?php
+use Dreamlands\Middleware\CurrentUserMiddleware;
+use Dreamlands\Plate\DTemplate;
+
+/**
+ * @var DTemplate $this
+ * @var CurrentUserMiddleware $currentUser
+ */
+?>
+<?php $this->layout('layout/default') ?>
+<h3>Hello World</h3>
+
+<?php var_dump($currentUser->getUser()) ?>
+<img src="<?= $this->identicon($currentUser->getUser()->name) ?>" alt="">

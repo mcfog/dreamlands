@@ -1,0 +1,15 @@
+<?php
+use Dreamlands\Plate\DTemplate;
+
+/**
+ * @see \Dreamlands\Action\Etc\UnicornAction::main
+ * @var DTemplate $this
+ * @var $title
+ * @var $detail
+ */
+?>
+<?php $this->layout('layout/default') ?>
+<h3>Unicorn!</h3>
+<h4><?= $this->e($title) ?></h4>
+<pre><?= $this->e($detail) ?></pre>
+
