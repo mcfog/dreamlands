@@ -8,12 +8,9 @@ class DResolver extends Resolver
     {
         $schema = parent::migrateCreateSchema();
         foreach ($schema->getTables() as $table) {
-//            foreach ($table->getColumns() as $column) {
-//                $column->setCustomSchemaOptions([
-//                    'charset' => 'utf8mb4',
-//                    'collation' => 'utf8mb4_unicode_ci',
-//                ]);
-//            }
+            $entityName = $this->mapper->entity();
+            /** @noinspection PhpUndefinedMethodInspection */
+            $entityName::alterTableSchema($table);
 
             $table
                 ->addOption('charset', 'utf8mb4')

@@ -1,0 +1,21 @@
+<?php
+use Dreamlands\Plate\DTemplate;
+
+/**
+ * @var DTemplate $this
+ * @var string $title
+ */
+?>
+<html>
+<head><?php $this->insert('partial/head', get_defined_vars()) ?></head>
+<body>
+<div class="main container">
+    <div class="row">
+        <div class="content twelve columns">
+            <?= $this->section('content') ?>
+        </div>
+    </div>
+</div>
+<?php $this->insert('partial/footer', get_defined_vars()) ?>
+</body>
+</html>

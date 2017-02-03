@@ -2,13 +2,13 @@
 use Dreamlands\Plate\DTemplate;
 
 /**
- * @see \Dreamlands\Action\Etc\UnicornAction::main
+ * @see \Dreamlands\Action\Etc\UnicornAction::run
  * @var DTemplate $this
  * @var $title
  * @var $detail
  */
 ?>
-<?php $this->layout('layout/default') ?>
+<?php $this->layout('layout/full', get_defined_vars()) ?>
 <h3>Unicorn!</h3>
 <h4><?= $this->e($title) ?></h4>
 <pre><?= $this->e($detail) ?></pre>

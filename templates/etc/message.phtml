@@ -1,0 +1,66 @@
+<?php
+use Dreamlands\MessageView;
+use Dreamlands\Plate\DTemplate;
+
+/**
+ * @see \Dreamlands\Action\Etc\UnicornAction::run
+ * @var DTemplate $this
+ * @var $title
+ * @var $message
+ * @var array $actions
+ */
+?>
+<?php $this->layout('layout/full', get_defined_vars()) ?>
+<style>
+    .default {
+        font-weight: bold;
+    }
+
+    .default::after {
+        text-indent: 1em;
+        font-weight: normal;
+        content: '(3秒后)';
+        color: #bbbbbb;
+    }
+</style>
+<h3><?= $this->e($title ?? '提示信息') ?></h3>
+<pre><?= $this->e($message) ?></pre>
+
+<span class="muted">你可以…</span>
+<br><br>
+<ul>
+    <?php
+    foreach ($actions as $idx => $action):
+        $defaultClass = (isset($defaultAction) && $defaultAction === $idx) ? ' class="default"' : '';
+        switch ($action[1]):
+            case MessageView::ACTION_BACK: ?>
+                <li<?= $defaultClass ?>>
+                    <a href="javascript:history.go(-1)"><?= $this->e($action[0]) ?></a>
+                </li>
+                <?php
+                break;
+            case MessageView::ACTION_REFRESH: ?>
+                <li<?= $defaultClass ?>>
+                    <a href="javascript:location.reload()"><?= $this->e($action[0]) ?></a>
+                </li>
+                <?php
+                break;
+            case MessageView::ACTION_JUMP: ?>
+                <li<?= $defaultClass ?>>
+                    <a href="<?= $this->e($action[2]) ?>"><?= $this->e($action[0]) ?></a>
+                </li>
+                <?php
+                break;
+        endswitch;
+    endforeach;
+    ?>
+</ul>
+
+<script>
+    setTimeout(function () {
+        var target = document.querySelector('.default a');
+        if (target) {
+            target.click();
+        }
+    }, 3000);
+</script>

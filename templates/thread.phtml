@@ -1,0 +1,18 @@
+<?php
+use Dreamlands\Entity\PostEntity;
+use Dreamlands\Plate\DTemplate;
+
+/**
+ * @var DTemplate $this
+ * @var PostEntity $thread
+ */
+?>
+<?php $this->layout('layout/default', get_defined_vars()) ?>
+<h4><?= $this->e($thread->title ?: '无标题') ?></h4>
+
+<?php $this->insert('partial/postbox', [
+    'parent' => $thread
+]) ?>
+
+<div class="intro"><?=$this->postContent($thread)?></div>
+

@@ -1,29 +1,34 @@
 <?php namespace Dreamlands\Action\Etc;
 
 use Dreamlands\DAction;
+use Dreamlands\Repository\Repository;
 use Dreamlands\Utility\Inspector;
 use Lit\Bolt\BoltContainer;
+use Psr\Log\LoggerInterface;
 
 class UnicornAction extends DAction
 {
     const PATH = '/unicorn';
     private $error;
 
-    public function __construct(BoltContainer $container, $error = null)
+    public function __construct(BoltContainer $container, Repository $repo, LoggerInterface $logger, $error = null)
     {
-        parent::__construct($container);
+        parent::__construct($container, $repo, $logger);
         $this->error = $error;
     }
 
-    protected function main()
+    protected function run()
     {
         $error = $this->error;
-        if ($error instanceof \Throwable) {
+        if ($this->container->envIsProd()) {
+            $title = 'ಠ_ಠ';
+            $detail = '';
+            $this->logger->error('unicorn', [
+                'error' => $error
+            ]);
+        } elseif ($error instanceof \Throwable) {
             $title = sprintf('%s: %s', get_class($error), $error->getMessage());
             $detail = implode("\n", Inspector::formatTrace($error->getTrace()));
-        } elseif($error === null) {
-            $title = 'Unicorn!';
-            $detail = '';
         } else {
             $title = get_class($error);
             ob_start();
@@ -32,7 +37,7 @@ class UnicornAction extends DAction
         }
 
 
-        return $this->renderPlate('etc/error', [
+        return $this->plate('etc/error')->render([
             'title' => $title,
             'detail' => $detail,
         ]);

@@ -1,0 +1,25 @@
+<?php
+use Dreamlands\Entity\PostEntity;
+use Dreamlands\Plate\DTemplate;
+
+/**
+ * @var DTemplate $this
+ * @var PostEntity $parent
+ */
+?>
+<form class="postbox" method="post" action="/post">
+    <div class="row">
+        <label for="post-title" class="two columns">标题</label>
+        <input type="text" name="title" id="post-title" class="ten columns" autocomplete="off" />
+    </div>
+    <div class="row">
+        <label for="post-content" class="two columns">内容</label>
+        <textarea name="content" id="post-content" cols="30" rows="10" class="ten columns" maxlength="512"></textarea>
+    </div>
+    <div class="row">
+        <div class="offset-by-two columns">
+            <input type="submit" value="发送" class="button-primary"/>
+        </div>
+    </div>
+    <input name="parent" type="hidden" value="<?= $parent->id ?>"/>
+</form>

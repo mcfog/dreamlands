@@ -1,19 +1,27 @@
 <?php namespace Dreamlands;
 
+use Dreamlands\Action\Etc\AkarinAction;
 use Dreamlands\Middleware\CurrentUserMiddleware;
 use Dreamlands\Plate\PlateView;
+use Dreamlands\Repository\Repository;
 use Lit\Bolt\BoltAction;
+use Lit\Bolt\BoltContainer;
 use Lit\Middlewares\FigCookiesMiddleware;
+use Nimo\IMiddleware;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class DAction
  * @package Dreamlands
+ *
+ * @property DContainer $container
  */
 abstract class DAction extends BoltAction
 {
     const METHOD = 'GET';
     const PATH = '/';
 
+    protected static $interceptors = [];
     /**
      * @var FigCookiesMiddleware
      */
@@ -23,15 +31,72 @@ abstract class DAction extends BoltAction
      * @var CurrentUserMiddleware
      */
     protected $currentUser;
+    /**
+     * @var Repository
+     */
+    protected $repo;
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
 
-    public function renderPlate(string $name, array $data = [])
+    public function __construct(BoltContainer $container, Repository $repo, LoggerInterface $logger)
+    {
+        parent::__construct($container);
+        $this->repo = $repo;
+        $this->logger = $logger;
+    }
+
+
+    /**
+     * @param string $name
+     */
+    protected function plate(string $name)
     {
         /** @noinspection PhpParamsInspection */
-        return $this->renderView($this->container->instantiate(PlateView::class, [
+        return $this->attachView($this->container->instantiate(PlateView::class, [
             'name' => $name,
-        ]), $data + [
+            'data' => $this->getGlobalViewData(),
+        ]));
+    }
+
+    /**
+     * @return array
+     */
+    protected function getGlobalViewData(): array
+    {
+        return [
+            'pageTitle' => 'Dreamlands',
+            'boards' => $this->container->boards,
             'currentUser' => $this->currentUser,
-        ]);
+            'isProd' => $this->container->envIsProd(),
+        ];
+    }
+
+    /**
+     * @param string $message
+     * @return MessageView
+     */
+    protected function message(string $message)
+    {
+        /** @noinspection PhpParamsInspection */
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->attachView($this->container->instantiate(MessageView::class, [
+            'message' => $message,
+            'data' => $this->getGlobalViewData(),
+        ]));
+    }
+
+    /**
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    protected function akarin()
+    {
+        /**
+         * @var IMiddleware $akarin
+         */
+        $akarin = $this->container->produce(AkarinAction::class);
+        return $akarin($this->request, $this->response, $this->next);
     }
 
     protected function beforeMain()
@@ -41,4 +106,11 @@ abstract class DAction extends BoltAction
         $this->cookie = FigCookiesMiddleware::fromRequest($this->request);
         $this->currentUser = CurrentUserMiddleware::fromRequest($this->request);
     }
+
+    protected function main()
+    {
+        return $this->run();
+    }
+
+    abstract protected function run();
 }

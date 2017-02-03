@@ -1,0 +1,27 @@
+<?php
+use Dreamlands\Entity\PostEntity;
+use Dreamlands\Plate\DTemplate;
+
+/**
+ * @var DTemplate $this
+ * @var PostEntity $post
+ */
+?>
+<div class="row head">
+    <div class="eight columns">
+        <div>
+            <span class="muted">No. <?= sprintf('%08d', $post->id) ?></span>
+            <a href="/t/<?= $post->id ?>">[回应]</a>
+        </div>
+        <?= $this->postTitle($post) ?>
+    </div>
+    <span class="four columns">
+        <small>
+            <?= date('Y-m-d H:i:s', $post->created_at) ?>
+        </small>
+        <?php $this->insert('partial/avatar', ['user' => $post->user]) ?>
+    </span>
+</div>
+<div class="row content">
+    <?= $this->postContent($post) ?>
+</div>

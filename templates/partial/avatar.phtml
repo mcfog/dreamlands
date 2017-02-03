@@ -1,0 +1,15 @@
+<?php
+use Dreamlands\Entity\UserEntity;
+use Dreamlands\Plate\DTemplate;
+
+/**
+ * @var DTemplate $this
+ * @var UserEntity $user
+ */
+?>
+<span class="avatar">
+    <img src="<?= $this->userAvatar($user) ?>" alt="avatar">
+    <span class="name">
+        <?= $user ? $user->name : str_repeat('&nbsp;', 8) ?>
+    </span>
+</span>

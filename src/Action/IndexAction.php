@@ -6,8 +6,8 @@ class IndexAction extends DAction
 {
     const PATH = '/';
 
-    protected function main()
+    protected function run()
     {
-        return $this->renderPlate('index');
+        return $this->plate('index')->render();
     }
 }

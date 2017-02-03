@@ -43,7 +43,7 @@ HTML;
             $exception->getFile(),
             $exception->getLine()
         );
-        if (php_sapi_name() !== 'cli') {
+        if (php_sapi_name() !== 'cli' && !headers_sent()) {
             header('Content-Type: text/html; charset=utf-8');
         }
 

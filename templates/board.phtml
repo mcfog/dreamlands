@@ -1,0 +1,27 @@
+<?php
+use Dreamlands\Entity\PostEntity;
+use Dreamlands\Plate\DTemplate;
+
+/**
+ * @var DTemplate $this
+ * @var PostEntity $board
+ * @var PostEntity[] $posts
+ */
+?>
+<?php $this->layout('layout/default', get_defined_vars()) ?>
+<h4><?= $this->e($board->title) ?></h4>
+
+<div class="intro"><?= $this->postContent($board) ?></div>
+<?php $this->insert('partial/postbox', [
+    'parent' => $board
+]) ?>
+
+<?php
+foreach ($posts as $post):
+    ?>
+    <div class="post">
+        <?php $this->insert('partial/post', ['post' => $post]) ?>
+    </div>
+    <?php
+    ?><?php
+endforeach; ?>

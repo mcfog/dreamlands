@@ -1,19 +1,40 @@
 <?php
+use Dreamlands\Entity\PostEntity;
+use Dreamlands\Middleware\CurrentUserMiddleware;
 use Dreamlands\Plate\DTemplate;
 
 /**
  * @var DTemplate $this
- * @var string $pageTitle
+ * @var CurrentUserMiddleware $currentUser
+ * @var string $title
+ * @var PostEntity[] $boards
  */
 ?>
 <html>
-<head>
-    <title>Dreamlands</title>
-</head>
+<head><?php $this->insert('partial/head', get_defined_vars()) ?></head>
 <body>
-
-<h1>Dreamlands</h1>
-<?= $this->section('content') ?>
-
+<div class="main container">
+    <div class="row">
+        <div class="main content ten columns">
+            <?= $this->section('content') ?>
+        </div><!--end .content-->
+        <div class="nav two columns">
+            <h1>
+                <a href="/">D</a>
+            </h1>
+            <ul>
+                <?php foreach ($boards as $board): ?>
+                    <li>
+                        <a href="/b/<?= $board->id ?>">
+                            <?= $this->e($board->title) ?>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+            <?php $this->insert('partial/avatar', ['user' => $currentUser->getUser()]) ?>
+        </div><!--end .nav-->
+    </div>
+</div><!--end .container-->
+<?php $this->insert('partial/footer', get_defined_vars()) ?>
 </body>
 </html>

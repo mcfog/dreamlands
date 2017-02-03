@@ -1,11 +1,9 @@
 <?php namespace Dreamlands\Plate;
 
+use Dreamlands\DView;
 use League\Plates\Engine;
-use Lit\Core\Interfaces\IView;
-use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response\HtmlResponse;
 
-class PlateView implements IView
+class PlateView extends DView
 {
     /**
      * @var Engine
@@ -16,19 +14,26 @@ class PlateView implements IView
      */
     private $name;
 
+
     /**
      * PlateView constructor.
      * @param Engine $plate
      * @param string $name
      */
-    public function __construct(Engine $plate, string $name)
+    public function __construct(Engine $plate, string $name, array $data = [])
     {
+        parent::__construct($data);
+
         $this->plate = $plate;
         $this->name = $name;
     }
 
-    public function render(array $data, ResponseInterface $resp)
+    public function render(array $data = [])
     {
-        return new HtmlResponse($this->plate->render($this->name, $data), $resp->getStatusCode(), $resp->getHeaders());
+        $this->getEmptyBody()->write($this->plate->render($this->name, $data + $this->data));
+
+        return $this->response
+            ->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
+
 }

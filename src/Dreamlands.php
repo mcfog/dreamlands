@@ -1,8 +1,11 @@
 <?php namespace Dreamlands;
 
+use Doctrine\DBAL\Logging\DebugStack;
 use Dreamlands\Middleware\CurrentUserMiddleware;
 use Lit\Bolt\BoltApp;
 use Lit\Middlewares\FigCookiesMiddleware;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Class Dreamlands
@@ -19,14 +22,19 @@ class Dreamlands extends BoltApp
             ->prepend($this->container->produce(CurrentUserMiddleware::class))
             ->prepend($this->container->produce(FigCookiesMiddleware::class))
             ->append($container->produce(ErrorHandler::class));
-//        //DELETEME
-//        echo '<xmp>' . PHP_EOL;
-//        var_dump(array_map(function ($m) {
-//            return is_object($m) ? get_class($m) : get_class($m[0]);
-//        }, $this->stack));
-//        die;
-//        //DELETEME END
 
+        if (!$container->envIsProd()) {
+            $this->prepend([$this, 'dumpQuery']);
+        }
+    }
 
+    public function dumpQuery(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    {
+        $response = $next($request, $response);
+
+        $queries = $this->container->produce(DebugStack::class)->queries;
+        $this->container->logger->info('queries', $queries);
+
+        return $response;
     }
 }

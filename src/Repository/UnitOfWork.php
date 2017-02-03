@@ -28,8 +28,11 @@ class UnitOfWork
 
     public function commit()
     {
-        return $this->db->mapper(UserEntity::class)->transaction(function() {
-            foreach($this->storage as $entity) {
+        if ($this->storage->count() === 0) {
+            return false;
+        }
+        return $this->db->mapper(UserEntity::class)->transaction(function () {
+            foreach ($this->storage as $entity) {
                 /**
                  * @var DEntity $entity
                  */

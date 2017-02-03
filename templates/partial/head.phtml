@@ -1,0 +1,102 @@
+<?php
+use Dreamlands\Plate\DTemplate;
+
+/**
+ * @var DTemplate $this
+ * @var string $pageTitle
+ */
+?>
+
+<title><?= $this->e($pageTitle) ?></title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/assets/css/skeleton.min.css">
+<style>
+    body {
+        background: hsla(210, 16%, 98%, 0.9);
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    .muted {
+        color: #868e96;
+    }
+
+    .postbox label {
+        text-align: right;
+    }
+
+    .avatar {
+        position: relative;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+
+        min-height: 56px;
+        min-width: 56px;
+    }
+
+    .avatar img {
+        position: absolute;
+        z-index: 80;
+    }
+
+    .avatar .name {
+        display: inline-block;
+        position: relative;
+        z-index: 100;
+        background: hsla(210, 16%, 98%, 0.75);
+        line-height: 56px;
+        font-family: monospace;
+        font-size: 14px;
+    }
+
+    .post {
+        margin-bottom: 1em;
+    }
+
+    .post .head {
+        border-top: 1px solid hsla(210, 16%, 70%, 0.8);
+        line-height: 28px;
+        margin-bottom: 0.5em;
+    }
+
+    @media (min-width: 750px) {
+        body {
+            background: #e9ecef;
+        }
+
+        body > .main.container {
+            box-shadow: 0 0 5px 5px hsla(210, 16%, 80%, 0.7);
+            border: solid hsla(210, 16%, 70%, 0.8);
+            border-width: 0 1px 1px 1px;
+            border-radius: 0 0 3px 3px;
+
+            background: hsla(210, 16%, 98%, 0.9);
+            padding: 1em;
+        }
+
+        .main.content {
+            float: right;
+            padding: 1em;
+        }
+
+        .nav {
+        }
+    }
+
+    .footer {
+        padding: 1em;
+        opacity: 0.5;
+    }
+
+    .footer a {
+        color: #222222;
+    }
+
+    .footer:hover {
+        opacity: 1;
+        transition: 1s;
+    }
+</style>

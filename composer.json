@@ -23,6 +23,11 @@
     "symfony/finder": "^3.2",
     "tedivm/stash": "^0.14",
     "vlucas/spot2": "^2.2",
-    "yzalis/identicon": "^1.1"
+    "yzalis/identicon": "^1.1",
+    "predis/predis": "^1.1",
+    "monolog/monolog": "^1.22"
+  },
+  "require-dev": {
+    "php-console/php-console": "^3.1"
   }
 }

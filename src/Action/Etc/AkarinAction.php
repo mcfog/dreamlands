@@ -6,10 +6,8 @@ class AkarinAction extends DAction
 {
     const PATH = '/akarin';
 
-    protected function main()
+    protected function run()
     {
-        $this->currentUser->spawnUser();
-
-        return $this->renderPlate('etc/akarin');
+        return $this->plate('etc/akarin')->render();
     }
 }

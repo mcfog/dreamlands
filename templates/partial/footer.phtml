@@ -1,0 +1,16 @@
+<?php
+use Dreamlands\Plate\DTemplate;
+
+/**
+ * @var DTemplate $this
+ * @var array $queries
+ * @var bool $isProd
+ */
+?>
+
+<div class="footer container">
+    Made with ❤︎ by <a href="https://about.mcfog.wang" target="_blank">@mcfog</a>
+    <?php if (!$isProd): ?>
+        <small>NON-PRODUCTION</small>
+    <?php endif; ?>
+</div>

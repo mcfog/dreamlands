@@ -21,10 +21,10 @@ class UserEntity extends DEntity
     {
         return [
             'id' => ['type' => 'integer', 'primary' => true, 'autoincrement' => true],
-            'hash' => ['type' => 'string', 'required' => true, 'length' => 40],
+            'hash' => ['type' => 'string', 'required' => true, 'length' => 40, 'unique' => true],
             'name' => ['type' => 'string', 'required' => true, 'unique' => true],
-            'expire_at' => ['type' => 'integer'],
-            'created_at' => ['type' => 'integer', 'value' => time()],
+            'expire_at' => ['type' => 'integer', 'required' => true, 'index' => true],
+            'created_at' => ['type' => 'integer', 'value' => time(), 'required' => true],
         ];
     }
 
