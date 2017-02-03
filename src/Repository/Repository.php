@@ -5,7 +5,6 @@ use Dreamlands\Entity\UserEntity;
 use Dreamlands\Spot\DEntity;
 use Dreamlands\Spot\DMapper;
 use Spot\Locator;
-use Spot\Query;
 
 class Repository
 {
@@ -81,7 +80,7 @@ class Repository
 
     /**
      * @param PostEntity $parent
-     * @return Query|PostEntity[]
+     * @return DList
      */
     public function getPosts(PostEntity $parent)
     {
@@ -90,12 +89,15 @@ class Repository
         }
         $type = PostEntity::$childTypeMap[$parent->type];
         /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->mapper(PostEntity::class)
+        $query = $this->mapper(PostEntity::class)
             ->where([
                 'deleted_at' => null,
                 'type' => $type,
                 'parent_id' => $parent->id
-            ]);
+            ])
+            ->order(['touched_at' => 'DESC']);
+
+        return new DList($query->with('user'));
     }
 
     /**

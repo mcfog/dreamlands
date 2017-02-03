@@ -10,7 +10,7 @@ use Dreamlands\Plate\DTemplate;
 <form class="postbox" method="post" action="/post">
     <div class="row">
         <label for="post-title" class="two columns">标题</label>
-        <input type="text" name="title" id="post-title" class="ten columns" autocomplete="off" />
+        <input type="text" name="title" id="post-title" class="ten columns" autocomplete="off"/>
     </div>
     <div class="row">
         <label for="post-content" class="two columns">内容</label>
@@ -18,7 +18,8 @@ use Dreamlands\Plate\DTemplate;
     </div>
     <div class="row">
         <div class="offset-by-two columns">
-            <input type="submit" value="发送" class="button-primary"/>
+            <input type="submit" value="<?= $parent->type === PostEntity::TYPE_BOARD ? '发布' : '回复' ?>"
+                   class="button-primary"/>
         </div>
     </div>
     <input name="parent" type="hidden" value="<?= $parent->id ?>"/>

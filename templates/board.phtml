@@ -9,19 +9,24 @@ use Dreamlands\Plate\DTemplate;
  */
 ?>
 <?php $this->layout('layout/default', get_defined_vars()) ?>
-<h4><?= $this->e($board->title) ?></h4>
+<h5><?= $this->e($board->title) ?></h5>
 
 <div class="intro"><?= $this->postContent($board) ?></div>
 <?php $this->insert('partial/postbox', [
     'parent' => $board
 ]) ?>
 
-<?php
-foreach ($posts as $post):
-    ?>
+<div class="post-list">
+    <?php foreach ($posts as $post): ?>
     <div class="post">
         <?php $this->insert('partial/post', ['post' => $post]) ?>
     </div>
-    <?php
-    ?><?php
-endforeach; ?>
+    <?php endforeach ?>
+</div>
+
+<script>
+    [].forEach.call(document.querySelectorAll('.post .content'), function (el) {
+        if (parseInt(el.clientHeight) < 100) return;
+        el.classList.add('collapsed');
+    });
+</script>

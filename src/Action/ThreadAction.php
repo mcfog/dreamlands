@@ -10,12 +10,19 @@ class ThreadAction extends DAction
     protected function run()
     {
         $id = $this->request->getAttribute('id');
+        /**
+         * @var PostEntity $post
+         */
         $post = $this->repo->byId(PostEntity::class, $id);
         if (!$post) {
             return $this->akarin();
         }
+
+        $replies = $this->repo->getPosts($post);
+
         return $this->plate('thread')->render([
-            'thread' => $post
+            'board' => $this->container->boards[$post->parent_id],
+            'thread' => $post,
         ]);
     }
 }

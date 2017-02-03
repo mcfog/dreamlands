@@ -1,13 +1,16 @@
 <?php namespace Dreamlands;
 
 use Dreamlands\Action\Etc\AkarinAction;
+use Dreamlands\Exceptions\ThrowableResult;
 use Dreamlands\Middleware\CurrentUserMiddleware;
+use Dreamlands\Plate\MessageView;
 use Dreamlands\Plate\PlateView;
 use Dreamlands\Repository\Repository;
 use Lit\Bolt\BoltAction;
 use Lit\Bolt\BoltContainer;
 use Lit\Middlewares\FigCookiesMiddleware;
 use Nimo\IMiddleware;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -109,8 +112,38 @@ abstract class DAction extends BoltAction
 
     protected function main()
     {
-        return $this->run();
+        try {
+            return $this->run();
+        } catch (ThrowableResult $result) {
+            return $result;
+        }
     }
 
+    protected function throw(ResponseInterface $response)
+    {
+        throw new ThrowableResult($response);
+    }
+
+    /**
+     * @return Entity\UserEntity
+     */
+    protected function getAuthedUser()
+    {
+        $userEntity = $this->currentUser->getUser();
+        if (!$userEntity) {
+            $response = $this
+                ->message('请先报道')
+                ->mayBack(true)
+                ->render();
+
+            return $this->throw($response);
+        }
+
+        return $userEntity;
+    }
+
+    /**
+     * @return ResponseInterface
+     */
     abstract protected function run();
 }

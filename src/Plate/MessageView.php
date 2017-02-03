@@ -1,6 +1,5 @@
-<?php namespace Dreamlands;
+<?php namespace Dreamlands\Plate;
 
-use Dreamlands\Plate\PlateView;
 use League\Plates\Engine;
 
 class MessageView extends PlateView

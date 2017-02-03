@@ -2,6 +2,7 @@
 
 use Doctrine\DBAL\Logging\DebugStack;
 use Dreamlands\Middleware\CurrentUserMiddleware;
+use Dreamlands\Middleware\ErrorHandler;
 use Lit\Bolt\BoltApp;
 use Lit\Middlewares\FigCookiesMiddleware;
 use Psr\Http\Message\ResponseInterface;
@@ -33,7 +34,7 @@ class Dreamlands extends BoltApp
         $response = $next($request, $response);
 
         $queries = $this->container->produce(DebugStack::class)->queries;
-        $this->container->logger->info('queries', $queries);
+        $this->container->logger->info(count($queries) . ' queries executed', $queries);
 
         return $response;
     }

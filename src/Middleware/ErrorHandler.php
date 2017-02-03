@@ -1,6 +1,8 @@
-<?php namespace Dreamlands;
+<?php namespace Dreamlands\Middleware;
 
 use Dreamlands\Action\Etc\UnicornAction;
+use Dreamlands\DAction;
+use Dreamlands\DContainer;
 use Nimo\IErrorMiddleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

@@ -53,13 +53,46 @@ use Dreamlands\Plate\DTemplate;
     }
 
     .post {
-        margin-bottom: 1em;
+        border-top: 1px solid hsla(210, 16%, 70%, 0.3);
+        padding: 0 0 1em 0.5em;
+    }
+
+    .post:nth-child(2n) {
+        background: hsla(210, 16%, 70%, 0.05);
     }
 
     .post .head {
-        border-top: 1px solid hsla(210, 16%, 70%, 0.8);
         line-height: 28px;
-        margin-bottom: 0.5em;
+        padding-bottom: 0.5em;
+    }
+
+    .post .title {
+        font-weight: bold;
+    }
+
+    .post .content {
+        margin: 0.25em 2em;
+        overflow: hidden;
+    }
+
+    .post .content.collapsed {
+        position: relative;
+        max-height: 8em;
+    }
+
+    .post .content.collapsed:before {
+        content: ' ';
+        position: absolute;
+        pointer-events: none;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to bottom, hsla(210, 16%, 98%, 0) 40%, hsla(210, 16%, 98%, 0.8) 80%, hsla(210, 16%, 98%, 1));
+    }
+
+    .post:nth-child(2n) .content.collapsed:before {
+        background: linear-gradient(to bottom, hsla(210, 16%, 96%, 0) 40%, hsla(210, 16%, 96%, 0.8) 80%, hsla(210, 16%, 96%, 1));
     }
 
     @media (min-width: 750px) {

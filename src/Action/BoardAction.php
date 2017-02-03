@@ -18,7 +18,7 @@ class BoardAction extends DAction
 
         return $this->plate('board')->render([
             'board' => $board,
-            'posts' => $this->repo->getPosts($board)->with('user'),
+            'posts' => $this->repo->getPosts($board)->fetchPage(1),
         ]);
     }
 }

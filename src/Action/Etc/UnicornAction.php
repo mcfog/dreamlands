@@ -42,4 +42,10 @@ class UnicornAction extends DAction
             'detail' => $detail,
         ]);
     }
+
+    protected function beforeMain()
+    {
+        //noop
+    }
+
 }

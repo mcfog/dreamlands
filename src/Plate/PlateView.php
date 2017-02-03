@@ -2,6 +2,7 @@
 
 use Dreamlands\DView;
 use League\Plates\Engine;
+use Psr\Http\Message\ResponseInterface;
 
 class PlateView extends DView
 {
@@ -28,6 +29,10 @@ class PlateView extends DView
         $this->name = $name;
     }
 
+    /**
+     * @param array $data
+     * @return ResponseInterface
+     */
     public function render(array $data = [])
     {
         $this->getEmptyBody()->write($this->plate->render($this->name, $data + $this->data));

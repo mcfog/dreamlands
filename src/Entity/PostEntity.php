@@ -9,16 +9,19 @@ use Spot\MapperInterface;
  * Class PostEntity
  * @package Dreamlands\Entity
  *
- * @property $id
- * @property $parent_id
- * @property $user_id
- * @property $type
- * @property $title
- * @property $contentType
- * @property $content
- * @property $created_at
- * @property $via
- * @property UserEntity $user
+ * @property $id;
+ * @property $parent_id;
+ * @property $user_id;
+ * @property $type;
+ * @property $flag;
+ * @property $title;
+ * @property $contentType;
+ * @property $content;
+ * @property $created_at;
+ * @property $touched_at;
+ * @property $deleted_at;
+ * @property $via;
+ * @property UserEntity $user;
  */
 class PostEntity extends DEntity
 {
@@ -86,6 +89,32 @@ class PostEntity extends DEntity
             'parent_id' => $board->id,
             'user_id' => $userEntity->id,
             'type' => self::TYPE_THREAD,
+            'flag' => 0,
+            'title' => $title,
+            'contentType' => $contentType,
+            'content' => $content,
+            'created_at' => time(),
+            'touched_at' => time(),
+            'deleted_at' => null,
+            'via' => self::VIA_WEB,
+        ]);
+    }
+
+    public static function newReply(
+        UserEntity $userEntity,
+        PostEntity $thread,
+        $title,
+        $content,
+        $contentType = self::CONTENT_TYPE_PLAIN
+    ) {
+        if ($thread->type !== self::TYPE_THREAD) {
+            throw new \Exception(__METHOD__ . '/' . __LINE__);
+        }
+
+        return new self([
+            'parent_id' => $thread->id,
+            'user_id' => $userEntity->id,
+            'type' => self::TYPE_REPLY,
             'flag' => 0,
             'title' => $title,
             'contentType' => $contentType,

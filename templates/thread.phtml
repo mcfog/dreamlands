@@ -4,15 +4,28 @@ use Dreamlands\Plate\DTemplate;
 
 /**
  * @var DTemplate $this
+ * @var PostEntity $board
  * @var PostEntity $thread
  */
 ?>
 <?php $this->layout('layout/default', get_defined_vars()) ?>
-<h4><?= $this->e($thread->title ?: '无标题') ?></h4>
+<div class="row">
+    <h5 class="u-pull-left">
+        <?= $this->e($thread->title ?: '无标题') ?>
+    </h5>
+    <span class="u-pull-right">
+        <a href="/b/<?= $board->id ?>">
+            返回<?= $this->e($board->title) ?>
+        </a>
+    </span>
+</div>
 
 <?php $this->insert('partial/postbox', [
     'parent' => $thread
 ]) ?>
 
-<div class="intro"><?=$this->postContent($thread)?></div>
-
+<div class="thread">
+    <div class="post">
+        <?php $this->insert('partial/post', ['post' => $thread]) ?>
+    </div>
+</div>
