@@ -79,7 +79,7 @@ class DoPostAction extends DAction
 
         $userEntity = $this->getAuthedUser();
         $post = PostEntity::newReply($userEntity, $thread, $title, $content);
-        $thread->touched_at = time();
+        $thread->touch();
 
         return $this->repo->runUnitOfWork(function (UnitOfWork $unitOfWork) use ($post, $thread) {
             $board = $this->container->boards[$thread->parent_id];

@@ -115,7 +115,7 @@ abstract class DAction extends BoltAction
         try {
             return $this->run();
         } catch (ThrowableResult $result) {
-            return $result;
+            return $result->getResponse();
         }
     }
 

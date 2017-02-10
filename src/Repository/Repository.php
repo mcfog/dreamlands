@@ -81,22 +81,29 @@ class Repository
     /**
      * @param PostEntity $parent
      * @return DList
+     * @throws \Exception
      */
-    public function getPosts(PostEntity $parent)
+    public function getPosts(PostEntity $parent, $from = null)
     {
         if (!isset(PostEntity::$childTypeMap[$parent->type])) {
             throw new \Exception(__METHOD__ . '/' . __LINE__);
         }
         $type = PostEntity::$childTypeMap[$parent->type];
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        $conditions = [
+            'deleted_at' => null,
+            'type' => $type,
+            'parent_id' => $parent->id
+        ];
+        if (!is_null($from)) {
+            $conditions += [
+                'touched_at <' => $from,
+            ];
+        }
         $query = $this->mapper(PostEntity::class)
-            ->where([
-                'deleted_at' => null,
-                'type' => $type,
-                'parent_id' => $parent->id
-            ])
+            ->where($conditions)
             ->order(['touched_at' => 'DESC']);
 
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return new DList($query->with('user'));
     }
 

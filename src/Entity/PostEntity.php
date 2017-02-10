@@ -2,6 +2,7 @@
 
 use Doctrine\DBAL\Schema\Table;
 use Dreamlands\Spot\DEntity;
+use Dreamlands\Utility\Utility;
 use Spot\EntityInterface;
 use Spot\MapperInterface;
 
@@ -44,15 +45,15 @@ class PostEntity extends DEntity
         return [
             'id' => ['type' => 'integer', 'primary' => true, 'autoincrement' => true],
             'parent_id' => ['type' => 'integer', 'required' => true],
-            'user_id' => ['type' => 'integer', 'required' => true],
+            'user_id' => ['type' => 'integer', 'notnull' => false],
             'type' => ['type' => 'smallint', 'required' => true],
             'flag' => ['type' => 'integer', 'required' => true, 'default' => 0],
             'title' => ['type' => 'string'],
             'contentType' => ['type' => 'smallint', 'required' => true],
             'content' => ['type' => 'text'],
             'created_at' => ['type' => 'integer', 'value' => time(), 'required' => true],
-            'touched_at' => ['type' => 'integer', 'value' => time(), 'required' => true],
-            'deleted_at' => ['type' => 'integer'],
+            'touched_at' => ['type' => 'bigint', 'value' => Utility::getNanotime(), 'required' => true],
+            'deleted_at' => ['type' => 'integer', 'value' => null],
             'via' => ['type' => 'string', 'required' => true, 'default' => 'web'],
         ];
     }
@@ -93,9 +94,6 @@ class PostEntity extends DEntity
             'title' => $title,
             'contentType' => $contentType,
             'content' => $content,
-            'created_at' => time(),
-            'touched_at' => time(),
-            'deleted_at' => null,
             'via' => self::VIA_WEB,
         ]);
     }
@@ -119,10 +117,12 @@ class PostEntity extends DEntity
             'title' => $title,
             'contentType' => $contentType,
             'content' => $content,
-            'created_at' => time(),
-            'touched_at' => time(),
-            'deleted_at' => null,
             'via' => self::VIA_WEB,
         ]);
+    }
+
+    public function touch()
+    {
+        $this->touched_at = Utility::getNanotime();
     }
 }

@@ -6,6 +6,9 @@ use Dreamlands\Plate\DTemplate;
  * @var DTemplate $this
  * @var PostEntity $board
  * @var PostEntity[] $posts
+ * @var int $remain
+ * @var int $from
+ * @var string $next
  */
 ?>
 <?php $this->layout('layout/default', get_defined_vars()) ?>
@@ -24,6 +27,16 @@ use Dreamlands\Plate\DTemplate;
     <?php endforeach ?>
 </div>
 
+<div class="more">
+    <hr>
+    <?php if ($remain > 0): ?>
+        <a href="/b/<?= $board->id ?>?from=<?= $next ?>">更多</a>
+    <?php endif ?>
+    <?php if ($from > 0): ?>
+        <a href="/b/<?= $board->id ?>">返回</a>
+    <?php endif ?>
+    <span class="muted u-pull-right">剩余<strong><?= $remain ?></strong>条未显示</>
+</div>
 <script>
     [].forEach.call(document.querySelectorAll('.post .content'), function (el) {
         if (parseInt(el.clientHeight) < 100) return;

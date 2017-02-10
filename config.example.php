@@ -9,7 +9,7 @@ return [
             'password' => '',
             'host' => 'localhost',
             'driver' => 'pdo_mysql',
-            'charset' => 'utf8',
+            'charset' => 'utf8mb4',
         ]
     ],
     'env' => 'dev',

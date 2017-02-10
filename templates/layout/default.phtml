@@ -15,9 +15,6 @@ use Dreamlands\Plate\DTemplate;
 <body>
 <div class="main container">
     <div class="row">
-        <div class="main content ten columns">
-            <?= $this->section('content') ?>
-        </div><!--end .content-->
         <div class="nav two columns">
             <h1>
                 <a href="/">D</a>
@@ -33,6 +30,9 @@ use Dreamlands\Plate\DTemplate;
             </ul>
             <?php $this->insert('partial/avatar', ['user' => $currentUser->getUser()]) ?>
         </div><!--end .nav-->
+        <div class="main content ten columns">
+            <?= $this->section('content') ?>
+        </div><!--end .content-->
     </div>
 </div><!--end .container-->
 <?php $this->insert('partial/footer', get_defined_vars()) ?>

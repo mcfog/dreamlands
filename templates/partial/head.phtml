@@ -95,37 +95,45 @@ use Dreamlands\Plate\DTemplate;
         background: linear-gradient(to bottom, hsla(210, 16%, 96%, 0) 40%, hsla(210, 16%, 96%, 0.8) 80%, hsla(210, 16%, 96%, 1));
     }
 
+    .more hr {
+        margin-bottom: 0.5em;
+    }
+
+    .more a {
+        margin-right: 0.5em;
+    }
+
     @media (min-width: 750px) {
         body {
-            background: #e9ecef;
+            background: #e9ecef url("http://dn-mcfog-present.qbox.me/bg.jpg") top center/cover no-repeat fixed;
         }
 
         body > .main.container {
-            box-shadow: 0 0 5px 5px hsla(210, 16%, 80%, 0.7);
-            border: solid hsla(210, 16%, 70%, 0.8);
-            border-width: 0 1px 1px 1px;
+            box-shadow: 0 0 5px 5px hsla(210, 16%, 98%, 0.6);
+            /*border: solid hsla(210, 16%, 70%, 0.8);*/
+            /*border-width: 0 1em 1em 1em;*/
             border-radius: 0 0 3px 3px;
 
-            background: hsla(210, 16%, 98%, 0.9);
-            padding: 1em;
+            background: hsla(210, 16%, 98%, 0.8);
         }
 
         .main.content {
-            float: right;
             padding: 1em;
+            background: hsla(210, 16%, 98%, 1);
         }
 
         .nav {
+            padding: 1em;
         }
     }
 
     .footer {
         padding: 1em;
-        opacity: 0.5;
+        opacity: 0.8;
     }
 
     .footer a {
-        color: #222222;
+        color: #222;
     }
 
     .footer:hover {

@@ -71,7 +71,7 @@ class CurrentUserMiddleware extends AbstractMiddleware
     protected function login()
     {
         $hash = $this->cookie->getRequestCookie('user');
-        $hash = 'ffc9302bdbffc65ad75ae4695c433f41631e4fad';
+        $hash = '62464869a63fd356a7d73acbbc0093cf4691bd5b';
         if(empty($hash)) {
             return;
         }
