@@ -11,7 +11,9 @@ use Dreamlands\Plate\DTemplate;
     <div class="eight columns">
         <div>
             <span class="muted">No. <?= sprintf('%08d', $post->id) ?></span>
-            <a href="/t/<?= $post->id ?>">[全文]</a>
+            <?php if ($post->type === PostEntity::TYPE_THREAD): ?>
+                <a href="/t/<?= $post->id ?>" class="thread_link">[全文]</a>
+            <?php endif ?>
         </div>
         <?= $this->postTitle($post) ?>
     </div>

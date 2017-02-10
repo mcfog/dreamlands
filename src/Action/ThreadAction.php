@@ -7,22 +7,43 @@ class ThreadAction extends DAction
 {
     const PATH = '/t/{id:\d+}';
 
+    const PERPAGE = 6;
     protected function run()
     {
         $id = $this->request->getAttribute('id');
         /**
-         * @var PostEntity $post
+         * @var PostEntity $thread
          */
-        $post = $this->repo->byId(PostEntity::class, $id);
-        if (!$post) {
+        $thread = $this->repo->byId(PostEntity::class, $id);
+        if (!$thread || $thread->type !== PostEntity::TYPE_THREAD) {
             return $this->akarin();
         }
 
-        $replies = $this->repo->getPosts($post);
+        $from = intval(base_convert($this->getQueryParam('[from]', ''), 36, 10));
+        $from = $from > 0 ? $from : null;
+
+        $posts = $this->repo->getPosts($thread, $from, false);
+        /** @noinspection PhpParamsInspection */
+        $posts = iterator_to_array($posts->fetch(self::PERPAGE));
+        /**
+         * @var PostEntity[] $posts
+         */
+        if (!empty($posts)) {
+            $lastPost = $posts[count($posts) - 1];
+            $remain = $this->repo->getPosts($thread, $lastPost->touched_at, false)->count();
+            $next = base_convert($lastPost->touched_at, 10, 36);
+        } else {
+            $remain = 0;
+            $next = '';
+        }
 
         return $this->plate('thread')->render([
-            'board' => $this->container->boards[$post->parent_id],
-            'thread' => $post,
+            'board' => $this->container->boards[$thread->parent_id],
+            'thread' => $thread,
+            'posts' => $posts,
+            'remain' => $remain,
+            'next' => $next,
+            'from' => $from,
         ]);
     }
 }

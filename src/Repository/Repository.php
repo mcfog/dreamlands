@@ -83,7 +83,7 @@ class Repository
      * @return DList
      * @throws \Exception
      */
-    public function getPosts(PostEntity $parent, $from = null)
+    public function getPosts(PostEntity $parent, $from = null, $isDesc = true)
     {
         if (!isset(PostEntity::$childTypeMap[$parent->type])) {
             throw new \Exception(__METHOD__ . '/' . __LINE__);
@@ -96,12 +96,12 @@ class Repository
         ];
         if (!is_null($from)) {
             $conditions += [
-                'touched_at <' => $from,
+                ($isDesc ? 'touched_at <' : 'touched_at >') => $from,
             ];
         }
         $query = $this->mapper(PostEntity::class)
             ->where($conditions)
-            ->order(['touched_at' => 'DESC']);
+            ->order(['touched_at' => ($isDesc ? 'DESC' : 'ASC')]);
 
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return new DList($query->with('user'));

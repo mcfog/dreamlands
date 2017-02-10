@@ -6,6 +6,10 @@ use Dreamlands\Plate\DTemplate;
  * @var DTemplate $this
  * @var PostEntity $board
  * @var PostEntity $thread
+ * @var PostEntity[] $posts
+ * @var int $remain
+ * @var int $from
+ * @var string $next
  */
 ?>
 <?php $this->layout('layout/default', get_defined_vars()) ?>
@@ -29,3 +33,29 @@ use Dreamlands\Plate\DTemplate;
         <?php $this->insert('partial/post', ['post' => $thread]) ?>
     </div>
 </div>
+
+
+<div class="post-list">
+    <?php foreach ($posts as $post): ?>
+        <div class="post">
+            <?php $this->insert('partial/post', ['post' => $post]) ?>
+        </div>
+    <?php endforeach ?>
+</div>
+
+<div class="more">
+    <hr>
+    <?php if ($remain > 0): ?>
+        <a href="/t/<?= $thread->id ?>?from=<?= $next ?>">更多</a>
+    <?php endif ?>
+    <?php if ($from > 0): ?>
+        <a href="/t/<?= $thread->id ?>">返回</a>
+    <?php endif ?>
+    <span class="muted u-pull-right">剩余<strong><?= $remain ?></strong>条未显示</>
+</div>
+
+<style>
+    .post .avatar.u_<?= $thread->user->name ?> {
+        font-weight: bold;
+    }
+</style>

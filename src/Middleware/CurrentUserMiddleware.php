@@ -57,7 +57,6 @@ class CurrentUserMiddleware extends AbstractMiddleware
 
             $this->repository->getUnitOfWork()->persist($user);
             $this->writeCookie($user);
-
         }
 
         return $this->user;
@@ -71,7 +70,6 @@ class CurrentUserMiddleware extends AbstractMiddleware
     protected function login()
     {
         $hash = $this->cookie->getRequestCookie('user');
-        $hash = '62464869a63fd356a7d73acbbc0093cf4691bd5b';
         if(empty($hash)) {
             return;
         }
