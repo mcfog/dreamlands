@@ -1,5 +1,6 @@
 <?php
 
+
 return [
     'db' => [
         'default',
@@ -12,8 +13,22 @@ return [
             'charset' => 'utf8mb4',
         ]
     ],
+    'container' => [
+        'Stash\Driver\FileSystem:options' => [
+            'path' => __DIR__ . '/data/cache',
+        ],
+    ],
     'env' => 'dev',
     'log' => [
         ['\Monolog\Handler\PHPConsoleHandler'],
     ],
+//    'env' => 'prod',
+//    'log' => [
+//        [
+//            '\Monolog\Handler\RotatingFileHandler',
+//            [
+//                __DIR__ . '/data/log/log'
+//            ]
+//        ],
+//    ],
 ];

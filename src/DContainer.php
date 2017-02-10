@@ -34,8 +34,8 @@ use Stash\Pool;
  */
 class DContainer extends BoltContainer
 {
-    const ENV_DEV = 'DEV';
-    const ENV_PROD = 'PROD';
+    const ENV_DEV = 'dev';
+    const ENV_PROD = 'prod';
 
     protected $env;
 
@@ -120,6 +120,10 @@ class DContainer extends BoltContainer
             $this[Connector::class] = function () {
                 return Connector::getInstance();
             };
+        }
+
+        foreach ($this->config('[container]', []) as $key => $value) {
+            $this[$key] = $value;
         }
     }
 

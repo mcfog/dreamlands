@@ -26,14 +26,9 @@ class DoPostAction extends DAction
                 return $this->postThread($parent);
             case PostEntity::TYPE_THREAD:
                 return $this->postReply($parent);
-                break;
+            default:
+                throw new \Exception(__METHOD__ . '/' . __LINE__);
         }
-
-        return $this
-            ->message('xxx')
-            ->mayBack()
-            ->mayJump('/', 'hhh', true)
-            ->render();
     }
 
     protected function postThread(PostEntity $board)
@@ -83,7 +78,7 @@ class DoPostAction extends DAction
 
         return $this->repo->runUnitOfWork(function (UnitOfWork $unitOfWork) use ($post, $thread) {
             $board = $this->container->boards[$thread->parent_id];
-            $unitOfWork = $this->repo->getUnitOfWork();
+//            $unitOfWork = $this->repo->getUnitOfWork();
             $unitOfWork->persist($post);
             $unitOfWork->persist($thread);
             $unitOfWork->commit();

@@ -1,9 +1,11 @@
 <?php
 use Dreamlands\Entity\PostEntity;
+use Dreamlands\Middleware\CurrentUserMiddleware;
 use Dreamlands\Plate\DTemplate;
 
 /**
  * @var DTemplate $this
+ * @var CurrentUserMiddleware $currentUser
  * @var PostEntity $board
  * @var PostEntity[] $posts
  * @var int $remain
@@ -15,9 +17,11 @@ use Dreamlands\Plate\DTemplate;
 <h5><?= $this->e($board->title) ?></h5>
 
 <div class="intro"><?= $this->postContent($board) ?></div>
-<?php $this->insert('partial/postbox', [
-    'parent' => $board
-]) ?>
+<?php if ($currentUser->getUser()) {
+    $this->insert('partial/postbox', [
+        'parent' => $board
+    ]);
+} ?>
 
 <div class="post-list">
     <?php foreach ($posts as $post): ?>

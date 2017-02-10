@@ -1,9 +1,11 @@
 <?php
 use Dreamlands\Entity\PostEntity;
+use Dreamlands\Middleware\CurrentUserMiddleware;
 use Dreamlands\Plate\DTemplate;
 
 /**
  * @var DTemplate $this
+ * @var CurrentUserMiddleware $currentUser
  * @var PostEntity $board
  * @var PostEntity $thread
  * @var PostEntity[] $posts
@@ -24,9 +26,11 @@ use Dreamlands\Plate\DTemplate;
     </span>
 </div>
 
-<?php $this->insert('partial/postbox', [
-    'parent' => $thread
-]) ?>
+<?php if ($currentUser->getUser()) {
+    $this->insert('partial/postbox', [
+        'parent' => $thread
+    ]);
+} ?>
 
 <div class="thread">
     <div class="post">

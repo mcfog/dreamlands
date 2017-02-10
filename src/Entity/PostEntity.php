@@ -16,7 +16,7 @@ use Spot\MapperInterface;
  * @property $type;
  * @property $flag;
  * @property $title;
- * @property $contentType;
+ * @property $content_type;
  * @property $content;
  * @property $created_at;
  * @property $touched_at;
@@ -48,8 +48,10 @@ class PostEntity extends DEntity
             'user_id' => ['type' => 'integer', 'notnull' => false],
             'type' => ['type' => 'smallint', 'required' => true],
             'flag' => ['type' => 'integer', 'required' => true, 'default' => 0],
+            'child_count' => ['type' => 'integer', 'value' => 0],
+            'latest_childs' => ['type' => 'json_array', 'value' => []],
             'title' => ['type' => 'string'],
-            'contentType' => ['type' => 'smallint', 'required' => true],
+            'content_type' => ['type' => 'smallint', 'required' => true],
             'content' => ['type' => 'text'],
             'created_at' => ['type' => 'integer', 'value' => time(), 'required' => true],
             'touched_at' => ['type' => 'bigint', 'value' => Utility::getNanotime(), 'required' => true],
@@ -92,7 +94,7 @@ class PostEntity extends DEntity
             'type' => self::TYPE_THREAD,
             'flag' => 0,
             'title' => $title,
-            'contentType' => $contentType,
+            'content_type' => $contentType,
             'content' => $content,
             'via' => self::VIA_WEB,
         ]);
@@ -115,7 +117,7 @@ class PostEntity extends DEntity
             'type' => self::TYPE_REPLY,
             'flag' => 0,
             'title' => $title,
-            'contentType' => $contentType,
+            'content_type' => $contentType,
             'content' => $content,
             'via' => self::VIA_WEB,
         ]);

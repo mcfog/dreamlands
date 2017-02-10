@@ -36,11 +36,16 @@ class PlateExtension implements ExtensionInterface
 
     public function postContent(PostEntity $postEntity)
     {
-        switch ($postEntity->contentType) {
+        switch ($postEntity->content_type) {
             case PostEntity::CONTENT_TYPE_HTML:
                 return $postEntity->content;
             case PostEntity::CONTENT_TYPE_PLAIN:
-                return nl2br(htmlspecialchars($postEntity->content));
+                if (!empty($postEntity->content)) {
+                    return nl2br(htmlspecialchars($postEntity->content));
+                }
+                return <<<'HTML'
+<span class="muted">无内容</span>
+HTML;
             default:
                 return '???';
         }
@@ -49,7 +54,7 @@ class PlateExtension implements ExtensionInterface
     public function postTitle(PostEntity $postEntity)
     {
         $class = empty($postEntity->title) ? ' muted' : '';
-        $title = $postEntity->title ?: '无标题';
+        $title = htmlspecialchars($postEntity->title ?: '无标题', ENT_QUOTES);
         return <<<HTML
 <span class="{$class} title">{$title}</span>
 HTML
