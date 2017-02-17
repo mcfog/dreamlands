@@ -26,7 +26,10 @@ use Dreamlands\Plate\DTemplate;
 <div class="post-list">
     <?php foreach ($posts as $post): ?>
     <div class="post">
-        <?php $this->insert('partial/post', ['post' => $post]) ?>
+        <?php $this->insert('partial/post', [
+            'post' => $post,
+            'showChildren' => true,
+        ]) ?>
     </div>
     <?php endforeach ?>
 </div>

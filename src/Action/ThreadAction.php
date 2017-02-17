@@ -28,10 +28,17 @@ class ThreadAction extends DAction
         /**
          * @var PostEntity[] $posts
          */
+        $last = '';
         if (!empty($posts)) {
             $lastPost = $posts[count($posts) - 1];
             $remain = $this->repo->getPosts($thread, $lastPost->touched_at, false)->count();
             $next = base_convert($lastPost->touched_at, 10, 36);
+
+            if ($remain > self::PERPAGE) {
+                $last = base_convert($this->repo->getLastAnchor($thread, self::PERPAGE), 10, 36);
+            } elseif ($remain > 0) {
+                $last = $next;
+            }
         } else {
             $remain = 0;
             $next = '';
@@ -43,6 +50,7 @@ class ThreadAction extends DAction
             'posts' => $posts,
             'remain' => $remain,
             'next' => $next,
+            'last' => $last,
             'from' => $from,
         ]);
     }

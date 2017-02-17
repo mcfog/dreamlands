@@ -29,3 +29,21 @@ use Dreamlands\Plate\DTemplate;
 <div class="row content">
     <?= $this->postContent($post) ?>
 </div>
+
+<?php if (!empty($showChildren) && $post->latest_childs): ?>
+    <div class="reply-list">
+        <div class="muted desc">
+            共计 <?= $post->child_count ?> 条回复，以下为最新回复
+        </div>
+        <?php
+        foreach ($post->latest_childs as $child):
+            $childObj = PostEntity::fromArray($child);
+
+            ?>
+            <div class="reply post">
+                <?php $this->insert('partial/post', ['post' => $childObj])
+                ?>
+            </div>
+        <?php endforeach ?>
+    </div>
+<?php endif ?>

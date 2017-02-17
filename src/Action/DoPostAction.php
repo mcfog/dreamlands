@@ -73,21 +73,14 @@ class DoPostAction extends DAction
         }
 
         $userEntity = $this->getAuthedUser();
-        $post = PostEntity::newReply($userEntity, $thread, $title, $content);
-        $thread->touch();
+        $reply = PostEntity::newReply($userEntity, $thread, $title, $content);
 
-        return $this->repo->runUnitOfWork(function (UnitOfWork $unitOfWork) use ($post, $thread) {
-            $board = $this->container->boards[$thread->parent_id];
-//            $unitOfWork = $this->repo->getUnitOfWork();
-            $unitOfWork->persist($post);
-            $unitOfWork->persist($thread);
-            $unitOfWork->commit();
-
-            return $this
-                ->message('回复成功')
-                ->mayJump('/t/' . $thread->id, '返回话题', true)
-                ->mayJump('/b/' . $board->id, sprintf('返回【%s】', $board->title), true)
-                ->render();
-        });
+        $this->repo->doReply($thread, $reply);
+        $board = $this->container->boards[$thread->parent_id];
+        return $this
+            ->message('回复成功')
+            ->mayJump('/t/' . $thread->id, '返回话题', true)
+            ->mayJump('/b/' . $board->id, sprintf('返回【%s】', $board->title), true)
+            ->render();
     }
 }

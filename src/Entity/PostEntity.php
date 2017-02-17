@@ -15,6 +15,8 @@ use Spot\MapperInterface;
  * @property $user_id;
  * @property $type;
  * @property $flag;
+ * @property $child_count;
+ * @property $latest_childs;
  * @property $title;
  * @property $content_type;
  * @property $content;
@@ -23,6 +25,7 @@ use Spot\MapperInterface;
  * @property $deleted_at;
  * @property $via;
  * @property UserEntity $user;
+ * @property PostEntity $parent;
  */
 class PostEntity extends DEntity
 {
@@ -40,11 +43,12 @@ class PostEntity extends DEntity
         self::TYPE_BOARD => self::TYPE_THREAD,
         self::TYPE_THREAD => self::TYPE_REPLY,
     ];
+
     public static function fields()
     {
         return [
             'id' => ['type' => 'integer', 'primary' => true, 'autoincrement' => true],
-            'parent_id' => ['type' => 'integer', 'required' => true],
+            'parent_id' => ['type' => 'integer', 'notnull' => false],
             'user_id' => ['type' => 'integer', 'notnull' => false],
             'type' => ['type' => 'smallint', 'required' => true],
             'flag' => ['type' => 'integer', 'required' => true, 'default' => 0],
@@ -63,7 +67,8 @@ class PostEntity extends DEntity
     public static function relations(MapperInterface $mapper, EntityInterface $entity)
     {
         return [
-            'user' => $mapper->belongsTo($entity, UserEntity::class, 'user_id')
+            'user' => $mapper->belongsTo($entity, UserEntity::class, 'user_id'),
+            'parent' => $mapper->belongsTo($entity, PostEntity::class, 'parent_id'),
         ];
     }
 
@@ -89,7 +94,9 @@ class PostEntity extends DEntity
         }
 
         return new self([
+            'parent' => $board,
             'parent_id' => $board->id,
+            'user' => $userEntity,
             'user_id' => $userEntity->id,
             'type' => self::TYPE_THREAD,
             'flag' => 0,
@@ -112,7 +119,9 @@ class PostEntity extends DEntity
         }
 
         return new self([
+            'parent' => $thread,
             'parent_id' => $thread->id,
+            'user' => $userEntity,
             'user_id' => $userEntity->id,
             'type' => self::TYPE_REPLY,
             'flag' => 0,
@@ -123,8 +132,35 @@ class PostEntity extends DEntity
         ]);
     }
 
+    public function attachReplyData(array $replyData)
+    {
+        if ($this->type !== self::TYPE_THREAD) {
+            throw new \Exception(__METHOD__ . '/' . __LINE__);
+        }
+
+        $this->child_count++;
+        $this->latest_childs[] = $replyData;
+        if (count($this->latest_childs) > 3) {
+            array_shift($this->latest_childs);
+        }
+
+        $this->touch();
+    }
+
     public function touch()
     {
         $this->touched_at = Utility::getNanotime();
+    }
+
+    protected static function loadRelation($key, array $data)
+    {
+        switch ($key) {
+            case 'user':
+                return new UserEntity($data);
+            case 'parent':
+                return new PostEntity($data);
+            default:
+                return parent::loadRelation($key, $data);
+        }
     }
 }

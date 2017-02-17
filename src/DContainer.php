@@ -110,6 +110,7 @@ class DContainer extends BoltContainer
         $this['boards'] = function () {
             return KeyValueUtility::getOrSet($this->localCache->sliceExpire('boards', 600), function () {
                 $boards = $this->repo->getBoardsArray();
+
                 return array_combine(array_map(function (PostEntity $board) {
                     return $board->id;
                 }, $boards), $boards);

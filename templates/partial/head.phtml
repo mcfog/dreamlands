@@ -77,7 +77,7 @@ use Dreamlands\Plate\DTemplate;
 
     .post .content.collapsed {
         position: relative;
-        max-height: 8em;
+        max-height: 10em;
     }
 
     .post .content.collapsed:before {
@@ -92,10 +92,11 @@ use Dreamlands\Plate\DTemplate;
     }
 
     .post:nth-child(2n) .content.collapsed:before {
-        background: linear-gradient(to bottom, hsla(210, 16%, 96%, 0) 40%, hsla(210, 16%, 96%, 0.8) 80%, hsla(210, 16%, 96%, 1));
+        background: linear-gradient(to bottom, hsla(210, 16%, 96.5%, 0) 40%, hsla(210, 16%, 96.5%, 0.8) 80%, hsla(210, 16%, 96.5%, 1));
     }
 
     .more hr {
+        margin-top: 0;
         margin-bottom: 0.5em;
     }
 
@@ -110,6 +111,14 @@ use Dreamlands\Plate\DTemplate;
     .thread {
         border-left: 3px solid #888888;
         margin-left: -3px;
+    }
+
+    .reply-list {
+        transform: scale(0.95);
+    }
+
+    .reply-list .desc {
+        padding-left: 0.5em;
     }
 
     @media (min-width: 750px) {

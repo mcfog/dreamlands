@@ -28,7 +28,7 @@ class Repository
     public function getUnitOfWork()
     {
         if (!isset($this->unitOfWork)) {
-            $this->unitOfWork = new UnitOfWork($this->db);
+            $this->unitOfWork = $this->makeUnitOfWork();
         }
 
         return $this->unitOfWork;
@@ -36,7 +36,7 @@ class Repository
 
     public function runUnitOfWork(callable $logic)
     {
-        return $logic(new UnitOfWork($this->db));
+        return $logic($this->makeUnitOfWork());
     }
 
     /**
@@ -73,7 +73,6 @@ class Repository
                 ->where([
                     'deleted_at' => null,
                     'type' => PostEntity::TYPE_BOARD,
-                    'parent_id' => 0
                 ])
         );
     }
@@ -107,6 +106,24 @@ class Repository
         return new DList($query->with('user'));
     }
 
+    public function getLastAnchor(PostEntity $thread, $perpage)
+    {
+        if ($thread->type !== PostEntity::TYPE_THREAD) {
+            throw new \Exception(__METHOD__ . '/' . __LINE__);
+        }
+        $offset = intval($thread->child_count / $perpage) * $perpage - 1;
+        $query = $this->mapper(PostEntity::class)
+            ->where([
+                'deleted_at' => null,
+                'type' => PostEntity::TYPE_REPLY,
+                'parent_id' => $thread->id,
+            ])
+            ->order(['touched_at' => 'ASC'])
+            ->offset($offset);
+
+        return $query->first()->touched_at;
+    }
+
     /**
      * @param $class
      * @param $id
@@ -115,5 +132,26 @@ class Repository
     public function byId($class, $id)
     {
         return $this->mapper($class)->get($id) ?: null;
+    }
+
+    public function doReply(PostEntity $thread, PostEntity $reply)
+    {
+        $unitOfWork = $this->makeUnitOfWork();
+        $unitOfWork->persist($reply);
+        $data = $reply->toArray();
+        $unitOfWork->commit();
+
+        $data['id'] = $reply->id;
+        $thread->attachReplyData($data);
+        $unitOfWork->persist($thread);
+        $unitOfWork->commit();
+    }
+
+    /**
+     * @return UnitOfWork
+     */
+    protected function makeUnitOfWork()
+    {
+        return new UnitOfWork($this->db);
     }
 }

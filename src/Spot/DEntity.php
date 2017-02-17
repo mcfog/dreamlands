@@ -32,4 +32,20 @@ class DEntity extends Entity
         return parent::__get($field);
     }
 
+    public static function fromArray(array $data)
+    {
+        $instance = new static($data);
+        foreach ($data as $key => $val) {
+            if (is_array($val) && $instance->relation($key)) {
+                $instance->relation($key, static::loadRelation($key, $val));
+            }
+        }
+
+        return $instance;
+    }
+
+    protected static function loadRelation($key, array $data)
+    {
+        return false;
+    }
 }
