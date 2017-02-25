@@ -1,5 +1,6 @@
 <?php namespace Dreamlands;
 
+use Doctrine\Common\Inflector\Inflector;
 use Dreamlands\Action\Etc\AkarinAction;
 use Dreamlands\Exceptions\ThrowableResult;
 use Dreamlands\Middleware\CurrentUserMiddleware;
@@ -66,12 +67,15 @@ abstract class DAction extends BoltAction
     /**
      * @return array
      */
-    protected function getGlobalViewData(): array
+    protected function getGlobalViewData()
     {
+        $action = substr(get_class($this), strlen('Dreamlands\\Action\\'), -strlen('Action'));
+        $action = Inflector::tableize(strtr($action, ['\\' => '-']));
         return [
             'pageTitle' => 'Dreamlands',
             'boards' => $this->container->boards,
             'currentUser' => $this->currentUser,
+            'action' => $action,
             'isProd' => $this->container->envIsProd(),
         ];
     }

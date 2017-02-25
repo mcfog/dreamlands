@@ -15,11 +15,11 @@ use Dreamlands\Plate\DTemplate;
  */
 ?>
 <?php $this->layout('layout/default', get_defined_vars()) ?>
-<div class="row">
-    <h5 class="u-pull-left">
+<div class="pure-g">
+    <h4 class="pure-u-5-6 f-left">
         <?= $this->e($thread->title ?: '无标题') ?>
-    </h5>
-    <span class="u-pull-right">
+    </h4>
+    <span class="pure-u-1-6 f-right">
         <a href="/b/<?= $board->id ?>">
             返回<?= $this->e($board->title) ?>
         </a>
@@ -58,7 +58,7 @@ use Dreamlands\Plate\DTemplate;
     <?php if ($from > 0): ?>
         <a href="/t/<?= $thread->id ?>">返回</a>
     <?php endif ?>
-    <span class="muted u-pull-right">剩余<strong><?= $remain ?></strong>条未显示</>
+    <span class="muted f-right">剩余<strong><?= $remain ?></strong>条未显示</>
 </div>
 
 <style>

@@ -4,14 +4,15 @@ use Dreamlands\Plate\DTemplate;
 /**
  * @var DTemplate $this
  * @var string $title
+ * @var string $action
  */
 ?>
-<html>
+<html lang="zh-cmn-Hans">
 <head><?php $this->insert('partial/head', get_defined_vars()) ?></head>
-<body>
+<body id="<?= $action ?>" class="loading">
 <div class="main container">
-    <div class="row">
-        <div class="content twelve columns">
+    <div class="pure-g">
+        <div class="content pure-u">
             <?= $this->section('content') ?>
         </div>
     </div>

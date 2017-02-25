@@ -41,7 +41,17 @@ class PlateExtension implements ExtensionInterface
                 return $postEntity->content;
             case PostEntity::CONTENT_TYPE_PLAIN:
                 if (!empty($postEntity->content)) {
-                    return nl2br(htmlspecialchars($postEntity->content));
+                    $lines = array_map(function ($line) {
+                        if (preg_match('/^>> (\d+)$/', trim($line), $matches)) {
+                            $line = htmlspecialchars($line);
+                            return <<<HTML
+<span class="post-quote" data-post="{$matches[1]}">{$matches[1]}</span>
+HTML;
+                        }
+                        return htmlspecialchars($line);
+                    }, explode("\n", $postEntity->content));
+
+                    return implode('<br>', $lines);
                 }
                 return <<<'HTML'
 <span class="muted">无内容</span>

@@ -14,7 +14,7 @@ use Dreamlands\Plate\DTemplate;
  */
 ?>
 <?php $this->layout('layout/default', get_defined_vars()) ?>
-<h5><?= $this->e($board->title) ?></h5>
+<h4><?= $this->e($board->title) ?></h4>
 
 <div class="intro"><?= $this->postContent($board) ?></div>
 <?php if ($currentUser->getUser()) {
@@ -42,11 +42,5 @@ use Dreamlands\Plate\DTemplate;
     <?php if ($from > 0): ?>
         <a href="/b/<?= $board->id ?>">返回</a>
     <?php endif ?>
-    <span class="muted u-pull-right">剩余<strong><?= $remain ?></strong>条未显示</>
+    <span class="muted f-right">剩余<strong><?= $remain ?></strong>条未显示</>
 </div>
-<script>
-    [].forEach.call(document.querySelectorAll('.post .content'), function (el) {
-        if (parseInt(el.clientHeight) < 100) return;
-        el.classList.add('collapsed');
-    });
-</script>

@@ -7,7 +7,8 @@ class ThreadAction extends DAction
 {
     const PATH = '/t/{id:\d+}';
 
-    const PERPAGE = 6;
+    const PERPAGE = 50;
+
     protected function run()
     {
         $id = $this->request->getAttribute('id');

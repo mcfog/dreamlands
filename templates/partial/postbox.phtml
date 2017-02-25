@@ -7,20 +7,24 @@ use Dreamlands\Plate\DTemplate;
  * @var PostEntity $parent
  */
 ?>
-<form class="postbox" method="post" action="/post">
-    <div class="row">
-        <label for="post-title" class="two columns">标题</label>
-        <input type="text" name="title" id="post-title" class="ten columns" autocomplete="off"/>
-    </div>
-    <div class="row">
-        <label for="post-content" class="two columns">内容</label>
-        <textarea name="content" id="post-content" cols="30" rows="10" class="ten columns" maxlength="512"></textarea>
-    </div>
-    <div class="row">
-        <div class="offset-by-two columns">
-            <input type="submit" value="<?= $parent->type === PostEntity::TYPE_BOARD ? '发布' : '回复' ?>"
-                   class="button-primary"/>
+<form class="postbox pure-form pure-form-aligned" method="post" action="/post">
+    <fieldset>
+        <div class="pure-control-group pure-g">
+            <label for="post-title" class="pure-u-1-6">标题</label>
+            <input type="text" name="title" id="post-title" class="pure-u-2-3" autocomplete="off"/>
         </div>
-    </div>
-    <input name="parent" type="hidden" value="<?= $parent->id ?>"/>
+        <div class="pure-control-group pure-g">
+            <label for="post-content" class="pure-u-1-6">内容</label>
+            <textarea name="content" id="post-content" cols="30" rows="10" class="pure-u-19-24"
+                      maxlength="512"></textarea>
+        </div>
+        <div class="pure-control-group pure-g">
+            <label class="pure-u-1-6">&nbsp;</label>
+            <div class="pure-u-19-24">
+                <input type="submit" value="<?= $parent->type === PostEntity::TYPE_BOARD ? '发布' : '回复' ?>"
+                       class="pure-button pure-button-primary"/>
+            </div>
+        </div>
+        <input name="parent" type="hidden" value="<?= $parent->id ?>"/>
+    </fieldset>
 </form>
