@@ -17,10 +17,10 @@
     - [ ] 管理员机制
     - [ ] expire
 - 帖子
-    - [ ] reply跳转／查看能力
+    - [x] reply跳转／查看能力
     - [x] reply count
     - [x] reply preview
-    - [ ] quote引用
+    - [x] quote引用
     - [ ] 链接
     - [ ] Markdown／bbcode等帖子内容格式
     - [ ] 图片

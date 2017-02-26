@@ -1,0 +1,293 @@
+@import '~purecss';
+@import '~open-color';
+
+[class*=pure-u] {
+  box-sizing: border-box;
+}
+
+$bg-clr: hsla(210, 16%, 98%, 1);
+$default-bgimg: "http://dn-mcfog-present.qbox.me/bg.jpg";
+
+//<editor-fold desc="Global">
+body {
+  background: $bg-clr;
+  &.loading {
+    filter: blur(10px);
+    opacity: 0.8;
+  }
+}
+
+a {
+  text-decoration: none;
+  color: $oc-blue-7;
+  &:visited {
+    color: $oc-blue-5;
+  }
+
+  .muted & {
+    color: desaturate($oc-blue-7, 40%);
+    //text-decoration: underline;
+  }
+}
+
+//</editor-fold>
+
+//<editor-fold desc="Utilities">
+.muted {
+  color: $oc-gray-6;
+  &:visited {
+    color: $oc-gray-6;
+  }
+}
+
+.f-right {
+  float: right;
+}
+
+.f-left {
+  float: left;
+}
+
+//</editor-fold>
+
+.postbox label {
+  text-align: right;
+}
+
+.avatar {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 56px;
+  min-width: 56px;
+
+  img {
+    position: absolute;
+    z-index: 80;
+  }
+
+  .name {
+    display: inline-block;
+    position: relative;
+    z-index: 100;
+    background: hsla(210, 16%, 98%, 0.75);
+
+    line-height: 56px;
+    font-family: monospace;
+    font-size: 14px;
+  }
+}
+
+.post {
+  border-top: 1px solid hsla(210, 16%, 70%, 0.3);
+  padding: 0 0 1em 0.5em;
+
+  &:nth-child(2n) {
+    background: hsla(210, 16%, 75%, 0.05);
+
+    .content.collapsed:before {
+      background: linear-gradient(to bottom, hsla(210, 16%, 97.0%, 0) 50%, hsla(210, 16%, 97.0%, 0.8) 85%, hsla(210, 16%, 97.0%, 1));
+    }
+
+    .post:nth-child(2n) .content.collapsed:before {
+      background: linear-gradient(to bottom, hsla(210, 16%, 96.3%, 0) 50%, hsla(210, 16%, 96.3%, 0.8) 85%, hsla(210, 16%, 96.3%, 1));
+    }
+  }
+
+  .head {
+    line-height: 28px;
+    padding-bottom: 0.5em;
+  }
+
+  .title {
+    font-weight: bold;
+  }
+
+  .content {
+    margin: 0.25em 2em;
+    overflow: hidden;
+  }
+
+  .content.collapsed {
+    position: relative;
+    max-height: 9.9em;
+
+    &:before {
+      content: ' ';
+      position: absolute;
+      pointer-events: none;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to bottom, hsla(210, 16%, 98%, 0) 50%, hsla(210, 16%, 98%, 0.8) 85%, hsla(210, 16%, 98%, 1));
+    }
+  }
+
+  .post-quote::before {
+    display: inline-block;
+    content: '\27A5';
+    color: #868e96;
+    padding: 3px;
+    border-radius: 3px;
+  }
+
+  .post-quote.j-quote-follow {
+    cursor: pointer;
+  }
+
+  .post-quote.j-quote-follow::before {
+    color: black;
+  }
+}
+
+.more {
+  hr {
+    margin-top: 0;
+    margin-bottom: 0.5em;
+  }
+  a {
+    margin-right: 0.5em;
+  }
+}
+
+.thread {
+  border-left: 3px solid #888888;
+  margin-left: -3px;
+  .thread_link {
+    display: none;
+  }
+}
+
+.reply-list {
+  transform: scale(0.95);
+  .desc {
+    padding-left: 0.5em;
+  }
+}
+
+.footer {
+  padding: 1em;
+  opacity: 0.8;
+
+  a {
+    color: #222;
+  }
+
+  &:hover {
+    opacity: 1;
+    transition: 1s;
+  }
+}
+
+//<editor-fold desc="modal">
+
+body::before {
+  transition: 500ms;
+  opacity: 0;
+  content: ' ';
+}
+
+body.modal {
+  height: 100%;
+  overflow: hidden;
+
+  .main.container, .footer.container {
+    filter: blur(10px);
+  }
+  &::before {
+    position: fixed;
+    display: block;
+    content: ' ';
+    z-index: 60000;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: black;
+    opacity: 0.3;
+    transition: opacity 500ms;
+  }
+}
+
+#modal-popup {
+  display: none;
+  position: fixed;
+  z-index: 65535;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  justify-content: center;
+  align-content: center;
+
+  body.modal & {
+    display: flex;
+  }
+  > .container {
+    box-shadow: 0 0 5px 5px fade_out(black, 0.7);
+
+    background: $bg-clr;
+    margin: auto;
+    min-width: 800px;
+    max-width: 960px;
+    min-height: 480px;
+    max-height: 720px;
+    overflow: auto;
+  }
+
+  .modal-header {
+    background-color: $oc-gray-7;
+    color: $oc-white;
+    margin: 0;
+    padding: 5px;
+  }
+
+  .modal-content {
+    padding: 5px;
+  }
+
+  .modal-close {
+    display: inline-block;
+    cursor: pointer;
+    padding: 0 0.5em;
+  }
+  .loading {
+    visibility: hidden;
+  }
+  .back {
+    display: inline-block;
+    padding: 0 0.5em;
+    cursor: pointer;
+  }
+}
+
+//</editor-fold>
+
+@media (min-width: 800px) {
+  body {
+    background: $bg-clr url($default-bgimg) top center/cover no-repeat fixed;
+    padding: 0 1em;
+
+    > .container {
+      max-width: 1200px;
+      margin: auto;
+    }
+    > .main.container {
+      box-shadow: 0 0 5px 5px fade_out($bg-clr, .4);
+      border-radius: 0 0 3px 3px;
+
+      background: fade_out($bg-clr, .2);
+    }
+  }
+
+  .main.content {
+    padding: 1em;
+    background: $bg-clr;
+  }
+
+  .nav {
+    padding: 1em;
+  }
+}

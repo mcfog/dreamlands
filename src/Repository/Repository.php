@@ -111,12 +111,40 @@ class Repository
         if ($thread->type !== PostEntity::TYPE_THREAD) {
             throw new \Exception(__METHOD__ . '/' . __LINE__);
         }
-        $offset = intval($thread->child_count / $perpage) * $perpage - 1;
+        $offset = max(0, intval($thread->child_count / $perpage) * $perpage - 1);
         $query = $this->mapper(PostEntity::class)
             ->where([
                 'deleted_at' => null,
                 'type' => PostEntity::TYPE_REPLY,
                 'parent_id' => $thread->id,
+            ])
+            ->order(['touched_at' => 'ASC'])
+            ->offset($offset);
+
+        return $query->first()->touched_at;
+    }
+
+    public function getAnchor(PostEntity $reply, $perpage)
+    {
+        if ($reply->type !== PostEntity::TYPE_REPLY) {
+            throw new \Exception(__METHOD__ . '/' . __LINE__);
+        }
+        $mapper = $this->mapper(PostEntity::class);
+        $count = $mapper
+            ->where([
+                'deleted_at' => null,
+                'type' => PostEntity::TYPE_REPLY,
+                'parent_id' => $reply->parent_id,
+                'touched_at <' => $reply->touched_at,
+            ])
+            ->order(['touched_at' => 'ASC'])
+            ->count();
+        $offset = max(0, intval($count / $perpage) * $perpage - 1);
+        $query = $mapper
+            ->where([
+                'deleted_at' => null,
+                'type' => PostEntity::TYPE_REPLY,
+                'parent_id' => $reply->parent_id,
             ])
             ->order(['touched_at' => 'ASC'])
             ->offset($offset);

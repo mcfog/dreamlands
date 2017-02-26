@@ -17,6 +17,8 @@ use Dreamlands\Plate\DTemplate;
             >No. <?= sprintf('%08d', $post->id) ?></a>
             <?php if ($post->type === PostEntity::TYPE_THREAD): ?>
                 <a href="/t/<?= $post->id ?>" class="thread_link">[全文]</a>
+            <?php else: ?>
+                <a href="/r/<?= $post->id ?>" class="muted" target="_blank">&#x29c9;</a>
             <?php endif ?>
         </div>
         <?= $this->postTitle($post) ?>
@@ -39,7 +41,7 @@ use Dreamlands\Plate\DTemplate;
 <?php if (!empty($showChildren) && $post->latest_childs): ?>
     <div class="reply-list">
         <div class="muted desc">
-            共计 <?= $post->child_count ?> 条回复，以下为最新回复
+            共计 <?= $post->child_count ?> 条回复，<a href="/t/<?= $post->id ?>?jump=latest" class="thread_link">最新回复</a>
         </div>
         <?php
         foreach ($post->latest_childs as $child):

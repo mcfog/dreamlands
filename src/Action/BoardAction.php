@@ -2,6 +2,7 @@
 
 use Dreamlands\DAction;
 use Dreamlands\Entity\PostEntity;
+use Dreamlands\Utility\Utility;
 
 class BoardAction extends DAction
 {
@@ -16,7 +17,7 @@ class BoardAction extends DAction
             return $this->akarin();
         }
 
-        $from = intval(base_convert($this->getQueryParam('[from]', ''), 36, 10));
+        $from = Utility::base36_decode($this->getQueryParam('[from]', ''));
         $from = $from > 0 ? $from : null;
 
         $board = $this->container->boards[$id];
@@ -30,7 +31,7 @@ class BoardAction extends DAction
         if (!empty($posts)) {
             $lastPost = $posts[count($posts) - 1];
             $remain = $this->repo->getPosts($board, $lastPost->touched_at)->count();
-            $next = base_convert($lastPost->touched_at, 10, 36);
+            $next = Utility::base36($lastPost->touched_at);
         } else {
             $remain = 0;
             $next = '';

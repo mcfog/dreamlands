@@ -2,6 +2,7 @@
 
 use Dreamlands\DAction;
 use Dreamlands\Entity\PostEntity;
+use Dreamlands\Utility\Utility;
 
 class ThreadAction extends DAction
 {
@@ -20,7 +21,20 @@ class ThreadAction extends DAction
             return $this->akarin();
         }
 
-        $from = intval(base_convert($this->getQueryParam('[from]', ''), 36, 10));
+        switch ($this->getQueryParam('[jump]', '')) {
+            case 'latest':
+                if ($thread->child_count <= self::PERPAGE) {
+                    return $this->redirect(sprintf('/t/%d', $id));
+                }
+                return $this->redirect(sprintf('/t/%d?from=%s',
+                    $id,
+                    Utility::base36($this->repo->getLastAnchor($thread, self::PERPAGE))
+                ));
+            default:
+                //noop
+        }
+
+        $from = Utility::base36_decode($this->getQueryParam('[from]', ''));
         $from = $from > 0 ? $from : null;
 
         $posts = $this->repo->getPosts($thread, $from, false);
@@ -33,10 +47,10 @@ class ThreadAction extends DAction
         if (!empty($posts)) {
             $lastPost = $posts[count($posts) - 1];
             $remain = $this->repo->getPosts($thread, $lastPost->touched_at, false)->count();
-            $next = base_convert($lastPost->touched_at, 10, 36);
+            $next = Utility::base36($lastPost->touched_at);
 
             if ($remain > self::PERPAGE) {
-                $last = base_convert($this->repo->getLastAnchor($thread, self::PERPAGE), 10, 36);
+                $last = Utility::base36($this->repo->getLastAnchor($thread, self::PERPAGE));
             } elseif ($remain > 0) {
                 $last = $next;
             }

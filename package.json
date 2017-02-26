@@ -1,0 +1,24 @@
+{
+  "name": "dreamlands",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "McFog Wang <mcfogw@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "minivents": "^2.0.2",
+    "open-color": "^1.4.2",
+    "purecss": "^0.6.2",
+    "umbrellajs": "^2.6.7"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^4.0.1",
+    "css-loader": "^0.26.2",
+    "dot": "^1.1.1",
+    "dot-loader": "^0.1.1",
+    "extract-text-webpack-plugin": "^2.0.0",
+    "node-sass": "^4.5.0",
+    "sass-loader": "^6.0.2",
+    "style-loader": "^0.13.2",
+    "webpack": "^2.2.1"
+  }
+}
