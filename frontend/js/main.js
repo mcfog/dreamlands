@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", ready);
 
 function ready() {
     if (document.body.id === 'board') {
-        u('.post .content').each(el => {
+        u('.post .content').each(function (el) {
             if (parseInt(el.clientHeight) < 100) return;
             el.classList.add('collapsed');
         });
@@ -86,7 +86,7 @@ function onClickPostNo(e) {
 }
 
 function onClickFollowPost(e) {
-    let cancelled = false;
+    var cancelled = false;
     modal.open(TPL.followPost());
     modal.on('close', cancel);
 
@@ -116,8 +116,4 @@ function onClickBody(e) {
     if ('modal-popup' === e.target.id || e.target.classList.contains('modal-close')) {
         modal.close();
     }
-}
-
-function $(id) {
-    return document.getElementById(id);
 }
