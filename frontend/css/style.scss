@@ -117,6 +117,7 @@ a {
       content: ' ';
       position: absolute;
       pointer-events: none;
+      z-index: 100;
       top: 0;
       bottom: 0;
       left: 0;
@@ -170,6 +171,7 @@ a {
 .footer {
   padding: 1em;
   opacity: 0.8;
+  text-align: right;
 
   a {
     color: #222;

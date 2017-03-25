@@ -10,8 +10,11 @@ use Dreamlands\Repository\Repository;
 use Lit\Bolt\BoltAction;
 use Lit\Bolt\BoltContainer;
 use Lit\Middlewares\FigCookiesMiddleware;
+use Lit\Middlewares\Traits\MiddlewareTrait;
 use Nimo\IMiddleware;
+use Nimo\MiddlewareStack;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -22,8 +25,11 @@ use Psr\Log\LoggerInterface;
  */
 abstract class DAction extends BoltAction
 {
+    use MiddlewareTrait;
+
     const METHOD = 'GET';
     const PATH = '/';
+    const ATTR_KEY = self::class;
 
     protected static $interceptors = [];
     /**
@@ -49,6 +55,14 @@ abstract class DAction extends BoltAction
         parent::__construct($container);
         $this->repo = $repo;
         $this->logger = $logger;
+    }
+
+    /**
+     * @return array
+     */
+    protected static function getInterceptors()
+    {
+        return self::$interceptors;
     }
 
 
@@ -116,11 +130,28 @@ abstract class DAction extends BoltAction
 
     protected function main()
     {
+        $this->attachToRequest();
         try {
-            return $this->run();
+            return $this->applyInterceptors();
         } catch (ThrowableResult $result) {
             return $result->getResponse();
         }
+    }
+
+    protected function applyInterceptors()
+    {
+        $stack = new MiddlewareStack();
+        foreach (static::getInterceptors() as $interceptor) {
+            $stack->append($this->container->stubResolver->resolve($interceptor));
+        }
+        $next = function (ServerRequestInterface $request, ResponseInterface $response, callable $next = null) {
+            $this->request = $request;
+            $this->response = $response;
+
+            return $this->run();
+        };
+
+        return $stack($this->request, $this->response, $next);
     }
 
     protected function throw(ResponseInterface $response)
