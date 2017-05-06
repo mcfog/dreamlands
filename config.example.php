@@ -1,7 +1,6 @@
 <?php
 
-
-return [
+return array_merge_recursive([
     'db' => [
         'default',
         [
@@ -31,4 +30,4 @@ return [
 //            ]
 //        ],
 //    ],
-];
+], json_decode($_SERVER['DCONFIG'], true));
