@@ -11,10 +11,7 @@ use Lit\Bolt\BoltAction;
 use Lit\Bolt\BoltContainer;
 use Lit\Middlewares\FigCookiesMiddleware;
 use Lit\Middlewares\Traits\MiddlewareTrait;
-use Nimo\IMiddleware;
-use Nimo\MiddlewareStack;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -31,7 +28,6 @@ abstract class DAction extends BoltAction
     const PATH = '/';
     const ATTR_KEY = self::class;
 
-    protected static $interceptors = [];
     /**
      * @var FigCookiesMiddleware
      */
@@ -55,14 +51,6 @@ abstract class DAction extends BoltAction
         parent::__construct($container);
         $this->repo = $repo;
         $this->logger = $logger;
-    }
-
-    /**
-     * @return array
-     */
-    protected static function getInterceptors()
-    {
-        return self::$interceptors;
     }
 
 
@@ -114,44 +102,23 @@ abstract class DAction extends BoltAction
     protected function akarin()
     {
         /**
-         * @var IMiddleware $akarin
+         * @var DAction $akarin
          */
         $akarin = $this->container->produce(AkarinAction::class);
-        return $akarin($this->request, $this->response, $this->next);
-    }
-
-    protected function beforeMain()
-    {
-        parent::beforeMain();
-
-        $this->cookie = FigCookiesMiddleware::fromRequest($this->request);
-        $this->currentUser = CurrentUserMiddleware::fromRequest($this->request);
+        return $akarin->process($this->request, $this->delegate);
     }
 
     protected function main()
     {
+        $this->cookie = FigCookiesMiddleware::fromRequest($this->request);
+        $this->currentUser = CurrentUserMiddleware::fromRequest($this->request);
         $this->attachToRequest();
+
         try {
-            return $this->applyInterceptors();
+            return $this->run();
         } catch (ThrowableResult $result) {
             return $result->getResponse();
         }
-    }
-
-    protected function applyInterceptors()
-    {
-        $stack = new MiddlewareStack();
-        foreach (static::getInterceptors() as $interceptor) {
-            $stack->append($this->container->stubResolver->resolve($interceptor));
-        }
-        $next = function (ServerRequestInterface $request, ResponseInterface $response, callable $next = null) {
-            $this->request = $request;
-            $this->response = $response;
-
-            return $this->run();
-        };
-
-        return $stack($this->request, $this->response, $next);
     }
 
     protected function throw(ResponseInterface $response)

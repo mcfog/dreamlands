@@ -22,27 +22,17 @@ class Inspector
     {
         $msg = <<<HTML
 <h2>PHP Fatal error</h2>
-<xmp>Uncaught exception '%s' with message '%s' in %s:%s
-    Stack trace:
-    %s
-    thrown in %s on line %s
+<xmp>
+%s
 </xmp>
 HTML;
 
-        $trace = $exception->getTrace();
-
-        $result = self::formatTrace($trace);
 
         $msg = sprintf(
             $msg,
-            get_class($exception),
-            $exception->getMessage(),
-            $exception->getFile(),
-            $exception->getLine(),
-            implode("\n", $result),
-            $exception->getFile(),
-            $exception->getLine()
+            self::formatThrowable($exception)
         );
+
         if (php_sapi_name() !== 'cli' && !headers_sent()) {
             header('Content-Type: text/html; charset=utf-8');
         }
@@ -58,6 +48,39 @@ HTML;
             }
         }
         exit(255);
+    }
+
+    public static function formatThrowable(\Throwable $throwable)
+    {
+        $msg = <<<TEXT
+%s with message '%s' in %s:%s
+
+Stack trace:
+%s
+
+thrown in %s on line %s
+TEXT;
+
+        $trace = $throwable->getTrace();
+
+        $result = self::formatTrace($trace);
+
+        $msg = sprintf(
+            $msg,
+            get_class($throwable),
+            $throwable->getMessage(),
+            $throwable->getFile(),
+            $throwable->getLine(),
+            implode("\n", $result),
+            $throwable->getFile(),
+            $throwable->getLine()
+        );
+
+        if ($previous = $throwable->getPrevious()) {
+            $msg .= "\n\n******Previous******\n" . self::formatThrowable($previous);
+        }
+
+        return $msg;
     }
 
     public static function formatTrace($trace)

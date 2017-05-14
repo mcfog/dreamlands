@@ -2,9 +2,9 @@
 
 use Dreamlands\Entity\UserEntity;
 use Dreamlands\Repository\Repository;
+use Lit\Core\AbstractMiddleware;
 use Lit\Middlewares\FigCookiesMiddleware;
 use Lit\Middlewares\Traits\MiddlewareTrait;
-use Nimo\AbstractMiddleware;
 
 class CurrentUserMiddleware extends AbstractMiddleware
 {
@@ -40,14 +40,12 @@ class CurrentUserMiddleware extends AbstractMiddleware
 
     protected function main()
     {
-        $this->attachToRequest();
         $this->cookie = FigCookiesMiddleware::fromRequest($this->request);
+        $this->attachToRequest($this->request);
 
         $this->login();
 
-        $response = $this->next();
-
-        return $response;
+        return $this->next();
     }
 
     public function spawnUser()
@@ -75,5 +73,8 @@ class CurrentUserMiddleware extends AbstractMiddleware
         }
 
         $this->user = $this->repository->getUserByHash($hash);
+        if ($this->user) {
+            $headers = $this->request->getHeaders();
+        }
     }
 }

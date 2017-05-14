@@ -28,7 +28,7 @@ class UnicornAction extends DAction
             ]);
         } elseif ($error instanceof \Throwable) {
             $title = sprintf('%s: %s', get_class($error), $error->getMessage());
-            $detail = implode("\n", Inspector::formatTrace($error->getTrace()));
+            $detail = Inspector::formatThrowable($error);
         } else {
             $title = get_class($error);
             ob_start();

@@ -23,6 +23,7 @@ class UserEntity extends DEntity
             'id' => ['type' => 'integer', 'primary' => true, 'autoincrement' => true],
             'hash' => ['type' => 'string', 'required' => true, 'length' => 40, 'unique' => true],
             'name' => ['type' => 'string', 'required' => true, 'unique' => true],
+            'last_ip' => ['type' => 'string', 'length' => 40],
             'expire_at' => ['type' => 'integer', 'required' => true, 'index' => true],
             'created_at' => ['type' => 'integer', 'value' => time(), 'required' => true],
         ];
