@@ -2,6 +2,7 @@
 
 use Doctrine\Common\Inflector\Inflector;
 use Dreamlands\Action\Etc\AkarinAction;
+use Dreamlands\Action\Etc\UnicornAction;
 use Dreamlands\Exceptions\ThrowableResult;
 use Dreamlands\Middleware\CurrentUserMiddleware;
 use Dreamlands\Plate\MessageView;
@@ -108,11 +109,12 @@ abstract class DAction extends BoltAction
         return $akarin->process($this->request, $this->delegate);
     }
 
-    protected function main()
+    protected function main(): ResponseInterface
     {
-        $this->cookie = FigCookiesMiddleware::fromRequest($this->request);
-        $this->currentUser = CurrentUserMiddleware::fromRequest($this->request);
-        $this->attachToRequest();
+        if (!$this instanceof UnicornAction) {
+            $this->cookie = FigCookiesMiddleware::fromRequest($this->request);
+            $this->currentUser = CurrentUserMiddleware::fromRequest($this->request);
+        }
 
         try {
             return $this->run();

@@ -941,12 +941,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/LitPHP/lit-bolt.git",
-                "reference": "aaba1f7d92d6b12acc63c2edaf7e0558c7ff91d8"
+                "reference": "921655e3476597348ad05718868bb122affde16f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://files.phpcomposer.com/files/LitPHP/lit-bolt/aaba1f7d92d6b12acc63c2edaf7e0558c7ff91d8.zip",
-                "reference": "aaba1f7d92d6b12acc63c2edaf7e0558c7ff91d8",
+                "url": "https://files.phpcomposer.com/files/LitPHP/lit-bolt/921655e3476597348ad05718868bb122affde16f.zip",
+                "reference": "921655e3476597348ad05718868bb122affde16f",
                 "shasum": ""
             },
             "require": {
@@ -980,7 +980,7 @@
                 }
             ],
             "description": "litphp micro-framework",
-            "time": "2017-05-14 03:05:18"
+            "time": "2017-05-20 09:10:34"
         },
         {
             "name": "litphp/cached-fast-route",
@@ -1031,12 +1031,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mcfog/lit.git",
-                "reference": "e6d85cbef44213f7b3fc2ea8e65fdaed1ff9160f"
+                "reference": "a105791ac7aabcada2c89a15191c970b21242605"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://files.phpcomposer.com/files/mcfog/lit/e6d85cbef44213f7b3fc2ea8e65fdaed1ff9160f.zip",
-                "reference": "e6d85cbef44213f7b3fc2ea8e65fdaed1ff9160f",
+                "url": "https://files.phpcomposer.com/files/mcfog/lit/a105791ac7aabcada2c89a15191c970b21242605.zip",
+                "reference": "a105791ac7aabcada2c89a15191c970b21242605",
                 "shasum": ""
             },
             "require": {
@@ -1066,7 +1066,7 @@
                 }
             ],
             "description": "yet another PHP Framework with extremely tiny codebase",
-            "time": "2017-05-14 03:04:59"
+            "time": "2017-05-20 09:11:15"
         },
         {
             "name": "litphp/middlewares",
@@ -1074,21 +1074,21 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/LitPHP/middlewares.git",
-                "reference": "4bf2cec5fcb071a8c404a8003d01d36e7a5f6181"
+                "reference": "d0e6f94bee71b797b953e343bfbb15a486466e89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://files.phpcomposer.com/files/LitPHP/middlewares/4bf2cec5fcb071a8c404a8003d01d36e7a5f6181.zip",
-                "reference": "4bf2cec5fcb071a8c404a8003d01d36e7a5f6181",
+                "url": "https://files.phpcomposer.com/files/LitPHP/middlewares/d0e6f94bee71b797b953e343bfbb15a486466e89.zip",
+                "reference": "d0e6f94bee71b797b953e343bfbb15a486466e89",
                 "shasum": ""
             },
             "require": {
-                "litphp/nimo": ">=0.2.0"
+                "litphp/lit": "^0.7.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.5.x-dev"
+                    "dev-master": "0.6.x-dev"
                 }
             },
             "autoload": {
@@ -1106,7 +1106,7 @@
                     "email": "mcfogw@gmail.com"
                 }
             ],
-            "time": "2016-05-22 12:32:09"
+            "time": "2017-05-14 03:04:29"
         },
         {
             "name": "litphp/nexus",
@@ -1148,61 +1148,6 @@
             ],
             "description": "misc interfaces, traits, and derived classes for lit components",
             "time": "2017-04-08T00:35:37+00:00"
-        },
-        {
-            "name": "litphp/nimo",
-            "version": "v0.2.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/LitPHP/nimo.git",
-                "reference": "9d0ae96c688fc14a31a46ec74f403652044fda7a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://files.phpcomposer.com/files/LitPHP/nimo/9d0ae96c688fc14a31a46ec74f403652044fda7a.zip",
-                "reference": "9d0ae96c688fc14a31a46ec74f403652044fda7a",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.5.0",
-                "psr/http-message": "^1.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.8"
-            },
-            "suggest": {
-                "zendframework/zend-diactoros": "PSR-7 implementation and middleware runner"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "0.1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Nimo\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "McFog Wang",
-                    "email": "mcfogw@gmail.com"
-                }
-            ],
-            "description": "Nimo Is your Middleware Organizer",
-            "keywords": [
-                "http",
-                "http-message",
-                "middleware",
-                "psr",
-                "psr-7"
-            ],
-            "time": "2017-01-28T07:19:49+00:00"
         },
         {
             "name": "monolog/monolog",

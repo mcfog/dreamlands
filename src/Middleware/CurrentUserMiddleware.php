@@ -5,6 +5,7 @@ use Dreamlands\Repository\Repository;
 use Lit\Core\AbstractMiddleware;
 use Lit\Middlewares\FigCookiesMiddleware;
 use Lit\Middlewares\Traits\MiddlewareTrait;
+use Psr\Http\Message\ResponseInterface;
 
 class CurrentUserMiddleware extends AbstractMiddleware
 {
@@ -38,7 +39,7 @@ class CurrentUserMiddleware extends AbstractMiddleware
         return $this->user;
     }
 
-    protected function main()
+    protected function main(): ResponseInterface
     {
         $this->cookie = FigCookiesMiddleware::fromRequest($this->request);
         $this->attachToRequest($this->request);

@@ -30,7 +30,10 @@ class UnicornAction extends DAction
             $title = sprintf('%s: %s', get_class($error), $error->getMessage());
             $detail = Inspector::formatThrowable($error);
         } else {
-            $title = get_class($error);
+            $title = gettype($error);
+            if ($title === 'object') {
+                $title = get_class($error);
+            }
             ob_start();
             var_dump($error);
             $detail = ob_get_clean();
