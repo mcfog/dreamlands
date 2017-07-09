@@ -1,15 +1,16 @@
-<?php namespace Dreamlands\Action;
+<?php namespace Dreamlands\Action\Board;
 
 use Dreamlands\DAction;
 use Dreamlands\Entity\PostEntity;
 use Dreamlands\Repository\UnitOfWork;
+use Psr\Http\Message\ResponseInterface;
 
 class DoPostAction extends DAction
 {
     const METHOD = 'POST';
     const PATH = '/post';
 
-    protected function run()
+    protected function run(): ResponseInterface
     {
         $parentId = intval($this->getBodyParam('[parent]'));
 
@@ -47,7 +48,6 @@ class DoPostAction extends DAction
         $post = PostEntity::newThread($userEntity, $board, $title, $content);
 
         return $this->repo->runUnitOfWork(function (UnitOfWork $unitOfWork) use ($post, $board) {
-            $unitOfWork = $this->repo->getUnitOfWork();
             $unitOfWork->persist($post);
             $unitOfWork->commit();
 

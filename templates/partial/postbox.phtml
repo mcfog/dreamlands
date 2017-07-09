@@ -1,30 +1,72 @@
 <?php
 use Dreamlands\Entity\PostEntity;
+use Dreamlands\Middleware\CurrentUserMiddleware;
 use Dreamlands\Plate\DTemplate;
 
 /**
  * @var DTemplate $this
  * @var PostEntity $parent
+ * @var CurrentUserMiddleware $currentUser
  */
 ?>
 <form class="postbox pure-form pure-form-aligned" method="post" action="/post">
     <fieldset>
-        <div class="pure-control-group pure-g">
-            <label for="post-title" class="pure-u-1-6">标题</label>
-            <input type="text" name="title" id="post-title" class="pure-u-2-3" autocomplete="off"/>
-        </div>
-        <div class="pure-control-group pure-g">
-            <label for="post-content" class="pure-u-1-6">内容</label>
-            <textarea name="content" id="post-content" cols="30" rows="10" class="pure-u-19-24"
-                      maxlength="512"></textarea>
-        </div>
-        <div class="pure-control-group pure-g">
-            <label class="pure-u-1-6">&nbsp;</label>
-            <div class="pure-u-19-24">
-                <input type="submit" value="<?= $parent->type === PostEntity::TYPE_BOARD ? '发布' : '回复' ?>"
-                       class="pure-button pure-button-primary"/>
+
+        <?php if (!$currentUser->getUser()): ?>
+            <div class="pure-control-group j-spawn-user">
+                <label for="post-sender" class="pure-u-1-6">发件人</label>
+                <input type="text" id="post-sender" class="pure-u-1-2 pure-input-rounded" autocomplete="off"
+                       placeholder="点此输入你的昵称" readonly/>
+
+                <button class="pure-button pure-button-primary pure-u-1-12">
+                    <i class="fa fa-sign-in"></i>
+                </button>
             </div>
-        </div>
+            <div class="pure-control-group">
+                <label for="post-title" class="pure-u-1-6">标题</label>
+                <input type="text" name="title" id="post-title" class="pure-u-2-3" autocomplete="off" readonly/>
+            </div>
+            <div class="pure-control-group">
+                <label for="post-content" class="pure-u-1-6">内容</label>
+                <textarea name="content" id="post-content" cols="30" rows="10" class="pure-u-19-24"
+                          maxlength="512" readonly></textarea>
+            </div>
+            <div class="pure-control-group">
+                <label class="pure-u-1-6">&nbsp;</label>
+                <div class="pure-u-19-24">
+                    <input type="submit"
+                           value="<?= $parent->type === PostEntity::TYPE_BOARD ? '发布' : '回复' ?>"
+                           class="pure-button pure-button-primary"
+                           disabled
+                    />
+                </div>
+            </div>
+        <?php else: ?>
+            <div class="pure-control-group">
+                <label for="post-sender" class="pure-u-1-6">发件人</label>
+                <input type="text" id="post-sender" class="pure-u-1-2 pure-input-rounded" autocomplete="off"
+                       value="<?= $this->e($currentUser->getUser()->getDisplayName()) ?>" readonly/>
+            </div>
+            <div class="pure-control-group">
+                <label for="post-title" class="pure-u-1-6">标题</label>
+                <input type="text" name="title" id="post-title" class="pure-u-2-3" autocomplete="off"/>
+            </div>
+            <div class="pure-control-group">
+                <label for="post-content" class="pure-u-1-6">内容</label>
+                <textarea name="content" id="post-content" cols="30" rows="10" class="pure-u-19-24"
+                          maxlength="512"></textarea>
+            </div>
+            <div class="pure-control-group">
+                <label class="pure-u-1-6">&nbsp;</label>
+                <div class="pure-u-19-24">
+                    <input type="submit"
+                           value="<?= $parent->type === PostEntity::TYPE_BOARD ? '发布' : '回复' ?>"
+                           class="pure-button pure-button-primary"
+                    />
+                </div>
+            </div>
+
+        <?php endif ?>
         <input name="parent" type="hidden" value="<?= $parent->id ?>"/>
     </fieldset>
 </form>

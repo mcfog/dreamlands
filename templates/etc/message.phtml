@@ -1,5 +1,6 @@
 <?php
 use Dreamlands\Plate\DTemplate;
+use Dreamlands\Plate\IMessageView;
 use Dreamlands\Plate\MessageView;
 
 /**
@@ -33,19 +34,19 @@ use Dreamlands\Plate\MessageView;
     foreach ($actions as $idx => $action):
         $defaultClass = (isset($defaultAction) && $defaultAction === $idx) ? ' class="default"' : '';
         switch ($action[1]):
-            case MessageView::ACTION_BACK: ?>
+            case IMessageView::ACTION_BACK: ?>
                 <li<?= $defaultClass ?>>
                     <a href="javascript:history.go(-1)"><?= $this->e($action[0]) ?></a>
                 </li>
                 <?php
                 break;
-            case MessageView::ACTION_REFRESH: ?>
+            case IMessageView::ACTION_REFRESH: ?>
                 <li<?= $defaultClass ?>>
                     <a href="javascript:location.reload()"><?= $this->e($action[0]) ?></a>
                 </li>
                 <?php
                 break;
-            case MessageView::ACTION_JUMP: ?>
+            case IMessageView::ACTION_JUMP: ?>
                 <li<?= $defaultClass ?>>
                     <a href="<?= $this->e($action[2]) ?>"><?= $this->e($action[0]) ?></a>
                 </li>

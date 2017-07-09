@@ -3,14 +3,13 @@
 use Doctrine\DBAL\Logging\DebugStack;
 use Dreamlands\Action\Etc\UnicornAction;
 use Dreamlands\Middleware\CurrentUserMiddleware;
-use Dreamlands\Middleware\ErrorHandler;
 use Dreamlands\Utility\DContainerAwareTrait;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Lit\Bolt\BoltApp;
 use Lit\Middlewares\FigCookiesMiddleware;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use RKA\Middleware\IpAddress;
 
 /**
  * Class Dreamlands
@@ -20,49 +19,72 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class Dreamlands extends BoltApp
 {
-    public function __construct(DContainer $container, ResponseInterface $responsePrototype = null)
+    protected function pipeMiddlewares()
     {
-        parent::__construct($container, $this->responsePrototype);
+        if (!$this->container->envIsProd()) {
+            $this->pipe($this->sqlLogger());
+        }
+
         /** @noinspection PhpParamsInspection */
         $this
-            ->prepend($this->container->produce(CurrentUserMiddleware::class))
-            ->prepend($this->container->produce(FigCookiesMiddleware::class))
-            ->prepend(new class($container) implements MiddlewareInterface
-            {
-                use DContainerAwareTrait;
+            ->pipe($this->errorHandler())
+            ->pipe($this->container->produce(IpAddress::class))
+            ->pipe($this->container->produce(FigCookiesMiddleware::class))
+            ->pipe($this->container->produce(CurrentUserMiddleware::class));
 
-                public function process(ServerRequestInterface $request, DelegateInterface $delegate)
-                {
-                    try {
-                        return $delegate->process($request);
-                    } catch (\Exception $e) {
-                        /**
-                         * @var UnicornAction $unicornAction
-                         */
-                        $unicornAction = $this->container->instantiate(UnicornAction::class, [
-                            'error' => $e
-                        ]);
-                        return $unicornAction->process($request, $delegate);
-                    }
-                }
-            });
-
-        if (!$container->envIsProd()) {
-            $this->prepend(new class($container) implements MiddlewareInterface
-            {
-                use DContainerAwareTrait;
-
-                public function process(ServerRequestInterface $request, DelegateInterface $delegate)
-                {
-                    $response = $delegate->process($request);
-                    $queries = $this->container->produce(DebugStack::class)->queries;
-                    $this->container->logger->info(count($queries) . ' queries executed', $queries);
-
-                    return $response;
-                }
-
-            });
-        }
+        parent::pipeMiddlewares();
     }
 
+    /**
+     * @return MiddlewareInterface
+     */
+    protected function sqlLogger()
+    {
+        return new class($this->container) implements MiddlewareInterface
+        {
+            use DContainerAwareTrait;
+
+            public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+            {
+                /**
+                 * @var DContainer $this ->container
+                 */
+                $response = $delegate->process($request);
+                $queries = $this->container->produce(DebugStack::class)->queries;
+                $this->container->logger->info(count($queries) . ' queries executed', $queries);
+
+                return $response;
+            }
+
+        };
+    }
+
+    /**
+     * @return MiddlewareInterface
+     */
+    protected function errorHandler()
+    {
+        return new class($this->container) implements MiddlewareInterface
+        {
+            use DContainerAwareTrait;
+
+            public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+            {
+                /**
+                 * @var DContainer $this ->container
+                 */
+                try {
+                    return $delegate->process($request);
+                } catch (\Throwable $e) {
+                    /**
+                     * @var UnicornAction $unicornAction
+                     */
+                    $unicornAction = $this->container->instantiate(UnicornAction::class, [
+                        'error' => $e
+                    ]);
+                    return $unicornAction->process($request, $delegate);
+                }
+            }
+        };
+    }
 }

@@ -4,10 +4,13 @@ use Dreamlands\Entity\PostEntity;
 use Dreamlands\Entity\UserEntity;
 use Dreamlands\Spot\DEntity;
 use Dreamlands\Spot\DMapper;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Spot\Locator;
 
 class Repository
 {
+    use LoggerAwareTrait;
     /**
      * @var Locator
      */
@@ -17,9 +20,10 @@ class Repository
      */
     protected $unitOfWork;
 
-    public function __construct(Locator $db)
+    public function __construct(Locator $db, LoggerInterface $logger)
     {
         $this->db = $db;
+        $this->setLogger($logger);
     }
 
     /**
@@ -175,11 +179,22 @@ class Repository
         $unitOfWork->commit();
     }
 
+    public function getUserByDisplayname($displayname)
+    {
+        list($nickname, $uniq) = explode('#', $displayname);
+        return $this->mapper(UserEntity::class)
+            ->where([
+                'nickname' => $nickname,
+                'uniq' => $uniq
+            ])
+            ->first();
+    }
+
     /**
      * @return UnitOfWork
      */
     protected function makeUnitOfWork()
     {
-        return new UnitOfWork($this->db);
+        return new UnitOfWork($this->db, $this->logger);
     }
 }

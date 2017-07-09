@@ -31,7 +31,7 @@ class PlateExtension implements ExtensionInterface
             return '/assets/image/nobody.png';
         }
 
-        return $this->identicon->getImageDataUri($userEntity->id . sha1($userEntity->name), 48);
+        return $this->identicon->getImageDataUri(sprintf('%d#%d', $userEntity->id, crc32($userEntity->hash)), 48);
     }
 
     public function postContent(PostEntity $postEntity)

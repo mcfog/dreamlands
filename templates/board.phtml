@@ -17,11 +17,11 @@ use Dreamlands\Plate\DTemplate;
 <h4><?= $this->e($board->title) ?></h4>
 
 <div class="intro"><?= $this->postContent($board) ?></div>
-<?php if ($currentUser->getUser()) {
-    $this->insert('partial/postbox', [
+<div class="postbox-container">
+    <?php $this->insert('partial/postbox', [
         'parent' => $board
-    ]);
-} ?>
+        ] + get_defined_vars()) ?>
+</div>
 
 <div class="post-list">
     <?php foreach ($posts as $post): ?>

@@ -1,8 +1,9 @@
-<?php namespace Dreamlands\Action;
+<?php namespace Dreamlands\Action\Board;
 
 use Dreamlands\DAction;
 use Dreamlands\Entity\PostEntity;
 use Dreamlands\Utility\Utility;
+use Psr\Http\Message\ResponseInterface;
 
 class BoardAction extends DAction
 {
@@ -10,7 +11,7 @@ class BoardAction extends DAction
 
     const PERPAGE = 10;
 
-    protected function run()
+    protected function run(): ResponseInterface
     {
         $id = $this->request->getAttribute('id');
         if (!isset($this->container->boards[$id])) {

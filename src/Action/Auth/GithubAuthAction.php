@@ -4,6 +4,7 @@ use Dflydev\FigCookies\SetCookie;
 use Dreamlands\DAction;
 use League\OAuth2\Client\Provider\Github;
 use Lit\Nexus\Interfaces\IPropertyInjection;
+use Psr\Http\Message\ResponseInterface;
 
 class GithubAuthAction extends DAction implements IPropertyInjection
 {
@@ -21,7 +22,7 @@ class GithubAuthAction extends DAction implements IPropertyInjection
         ];
     }
 
-    protected function run()
+    protected function run(): ResponseInterface
     {
         $url = $this->github->getAuthorizationUrl();
         $state = $this->github->getState();

@@ -2,6 +2,7 @@
 
 use Dreamlands\Entity\UserEntity;
 use Dreamlands\Repository\Repository;
+use Dreamlands\Repository\UnitOfWork;
 use Lit\Core\AbstractMiddleware;
 use Lit\Middlewares\FigCookiesMiddleware;
 use Lit\Middlewares\Traits\MiddlewareTrait;
@@ -39,43 +40,93 @@ class CurrentUserMiddleware extends AbstractMiddleware
         return $this->user;
     }
 
-    protected function main(): ResponseInterface
+    /**
+     * @param $nickname
+     * @return UserEntity
+     */
+    public function spawnUser($nickname)
     {
-        $this->cookie = FigCookiesMiddleware::fromRequest($this->request);
-        $this->attachToRequest($this->request);
+        if (false !== strpos($nickname, ':')) {
+            $user = $this->login($nickname);
+            if ($user) {
+                return $user;
+            } else {
+                throw new \RuntimeException('??……');
+            }
+        }
 
-        $this->login();
+        if (!isset($this->user)) {
+            $count = 0;
 
-        return $this->next();
-    }
+            do {
+                if (++$count > 3) {
+                    throw new \RuntimeException('自古枪兵……');
+                }
 
-    public function spawnUser()
-    {
-        if(!isset($this->user)) {
-            $this->user = $user = UserEntity::spawn();
+                $this->user = $user = UserEntity::spawn($nickname);
+            } while ($this->repository->getUserByDisplayname($user->getDisplayName()));
 
-            $this->repository->getUnitOfWork()->persist($user);
+            $user->last_ip = $this->request->getAttribute('ip_address');
+
+            $this->repository->runUnitOfWork(function (UnitOfWork $unitOfWork) use ($user) {
+                $unitOfWork->persist($user);
+                $unitOfWork->commit();
+            });
             $this->writeCookie($user);
         }
 
         return $this->user;
     }
 
-    protected function writeCookie(UserEntity $userEntity)
+    protected function login($login)
     {
-        $this->cookie->setResponseCookie('user', $userEntity->hash, null, time() + 365 * 86400, true);
+        list($name, $hash) = explode(':', $login);
+        $user = $this->getAuthedUser($hash, $name);
+        if ($user) {
+            $this->user = $user;
+            $this->writeCookie($user);
+        }
+
+        return $user;
     }
 
-    protected function login()
+    protected function writeCookie(UserEntity $userEntity)
     {
-        $hash = $this->cookie->getRequestCookie('user');
-        if(empty($hash)) {
+        $this->cookie->setResponseCookie('hash', $userEntity->hash
+            , null, time() + 365 * 86400, true, null, '/');
+
+        $this->cookie->setResponseCookie('name', $userEntity->getDisplayName()
+            , null, time() + 365 * 86400, true, null, '/');
+    }
+
+    protected function main(): ResponseInterface
+    {
+        $this->cookie = FigCookiesMiddleware::fromRequest($this->request);
+        $this->attachToRequest($this->request);
+
+        $this->checkLogin();
+
+        return $this->next();
+    }
+
+    protected function checkLogin()
+    {
+        $hash = $this->cookie->getRequestCookie('hash');
+        if (empty($hash)) {
             return;
         }
 
-        $this->user = $this->repository->getUserByHash($hash);
-        if ($this->user) {
-            $headers = $this->request->getHeaders();
-        }
+        $this->user = $this->getAuthedUser($hash, $this->cookie->getRequestCookie('name'));
     }
+
+    protected function getAuthedUser($hash, $name)
+    {
+        $user = $this->repository->getUserByHash($hash);
+        if ($user->getDisplayName() === $name) {
+            return $user;
+        }
+
+        return null;
+    }
+
 }

@@ -1,14 +1,15 @@
-<?php namespace Dreamlands\Action;
+<?php namespace Dreamlands\Action\Board;
 
 use Dreamlands\DAction;
 use Dreamlands\Entity\PostEntity;
 use Dreamlands\Utility\Utility;
+use Psr\Http\Message\ResponseInterface;
 
 class RefAction extends DAction
 {
     const PATH = '/r/{id:\d+}';
 
-    protected function run()
+    protected function run(): ResponseInterface
     {
         $id = $this->request->getAttribute('id');
         /**

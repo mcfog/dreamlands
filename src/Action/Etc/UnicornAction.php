@@ -4,6 +4,7 @@ use Dreamlands\DAction;
 use Dreamlands\Repository\Repository;
 use Dreamlands\Utility\Inspector;
 use Lit\Bolt\BoltContainer;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
 class UnicornAction extends DAction
@@ -17,7 +18,7 @@ class UnicornAction extends DAction
         $this->error = $error;
     }
 
-    protected function run()
+    protected function run(): ResponseInterface
     {
         $error = $this->error;
         if ($this->container->envIsProd()) {

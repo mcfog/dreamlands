@@ -35,6 +35,14 @@ module.exports = {
                 test: /\.dot\.html$/,
                 loader: 'dot-loader'
             }
+            ,
+            {
+                test: /\.(svg|woff|woff2|ttf|eot)(\?.*$|$)/,
+                loader: 'file-loader',
+                query: {
+                    name: '/fonts/[name].[ext]'
+                }
+            }
         ]
     },
     resolve: {

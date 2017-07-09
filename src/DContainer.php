@@ -18,6 +18,7 @@ use PhpConsole\Connector;
 use Psr\Log\LoggerInterface;
 use Spot\Config;
 use Spot\Locator;
+use Stash\Driver\BlackHole;
 use Stash\Driver\FileSystem;
 use Stash\Interfaces\DriverInterface;
 use Stash\Pool;
@@ -121,6 +122,7 @@ class DContainer extends BoltContainer
             $this[Connector::class] = function () {
                 return Connector::getInstance();
             };
+            $this->alias(BlackHole::class, DriverInterface::class);
         }
 
         foreach ($this->config('[container]', []) as $key => $value) {

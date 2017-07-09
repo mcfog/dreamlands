@@ -2,10 +2,13 @@
 
 use Dreamlands\Entity\UserEntity;
 use Dreamlands\Spot\DEntity;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Spot\Locator;
 
 class UnitOfWork
 {
+    use LoggerAwareTrait;
     /**
      * @var \SplObjectStorage
      */
@@ -15,10 +18,11 @@ class UnitOfWork
      */
     protected $db;
 
-    public function __construct(Locator $db)
+    public function __construct(Locator $db, LoggerInterface $logger)
     {
         $this->storage = new \SplObjectStorage();
         $this->db = $db;
+        $this->setLogger($logger);
     }
 
     public function persist(DEntity $entity)
@@ -36,7 +40,14 @@ class UnitOfWork
                 /**
                  * @var DEntity $entity
                  */
-                $this->db->mapper(get_class($entity))->save($entity);
+                $result = $this->db->mapper(get_class($entity))->save($entity);
+                if (!$result) {
+                    $this->logger->error('db_persist_failed', [
+                        'result' => $result,
+                        'entity' => $entity,
+                    ]);
+                    throw new \RuntimeException('db persist failed');
+                }
             }
             $this->clear();
 

@@ -5,6 +5,9 @@ use Dreamlands\Action\Etc\AkarinAction;
 use Dreamlands\Action\Etc\UnicornAction;
 use Dreamlands\Exceptions\ThrowableResult;
 use Dreamlands\Middleware\CurrentUserMiddleware;
+use Dreamlands\Plate\AjaxMessageView;
+use Dreamlands\Plate\AjaxView;
+use Dreamlands\Plate\IMessageView;
 use Dreamlands\Plate\MessageView;
 use Dreamlands\Plate\PlateView;
 use Dreamlands\Repository\Repository;
@@ -27,7 +30,6 @@ abstract class DAction extends BoltAction
 
     const METHOD = 'GET';
     const PATH = '/';
-    const ATTR_KEY = self::class;
 
     /**
      * @var FigCookiesMiddleware
@@ -83,18 +85,34 @@ abstract class DAction extends BoltAction
         ];
     }
 
+    protected function ajax(): AjaxView
+    {
+        /**
+         * @var AjaxView $ajaxView
+         */
+        /** @noinspection PhpParamsInspection */
+        $ajaxView = $this->attachView($this->container->instantiate(AjaxView::class));
+
+        return $ajaxView;
+    }
+
     /**
      * @param string $message
-     * @return MessageView
+     * @return IMessageView
      */
-    protected function message(string $message)
+    protected function message(string $message): IMessageView
     {
+        /**
+         * @var IMessageView $messageView
+         */
+        $className = $this->isAjax() ? AjaxMessageView::class : MessageView::class;
         /** @noinspection PhpParamsInspection */
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->attachView($this->container->instantiate(MessageView::class, [
+        $messageView = $this->attachView($this->container->instantiate($className, [
             'message' => $message,
             'data' => $this->getGlobalViewData(),
         ]));
+
+        return $messageView;
     }
 
     /**
@@ -120,6 +138,15 @@ abstract class DAction extends BoltAction
             return $this->run();
         } catch (ThrowableResult $result) {
             return $result->getResponse();
+        } catch (\Throwable $e) {
+            $this->logger->error('action_fail', [
+                'e' => $e
+            ]);
+            if ($this->isAjax()) {
+                return $this->message('发生了未知的异常')->render();
+            }
+
+            throw $e;
         }
     }
 
@@ -146,8 +173,13 @@ abstract class DAction extends BoltAction
         return $userEntity;
     }
 
+    protected function isAjax()
+    {
+        return $this->request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest';
+    }
+
     /**
      * @return ResponseInterface
      */
-    abstract protected function run();
+    abstract protected function run(): ResponseInterface;
 }

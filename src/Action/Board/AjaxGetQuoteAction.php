@@ -1,13 +1,14 @@
-<?php namespace Dreamlands\Action;
+<?php namespace Dreamlands\Action\Board;
 
 use Dreamlands\DAction;
 use Dreamlands\Entity\PostEntity;
+use Psr\Http\Message\ResponseInterface;
 
 class AjaxGetQuoteAction extends DAction
 {
     const PATH = '/api/get-quote';
 
-    protected function run()
+    protected function run(): ResponseInterface
     {
         /**
          * @var PostEntity $post

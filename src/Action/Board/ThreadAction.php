@@ -1,8 +1,9 @@
-<?php namespace Dreamlands\Action;
+<?php namespace Dreamlands\Action\Board;
 
 use Dreamlands\DAction;
 use Dreamlands\Entity\PostEntity;
 use Dreamlands\Utility\Utility;
+use Psr\Http\Message\ResponseInterface;
 
 class ThreadAction extends DAction
 {
@@ -10,7 +11,7 @@ class ThreadAction extends DAction
 
     const PERPAGE = 50;
 
-    protected function run()
+    protected function run(): ResponseInterface
     {
         $id = $this->request->getAttribute('id');
         /**

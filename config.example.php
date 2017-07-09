@@ -19,6 +19,12 @@ return array_merge_recursive([
     ],
     'env' => 'dev',
     'log' => [
+        [
+            '\Monolog\Handler\RotatingFileHandler',
+            [
+                __DIR__ . '/data/log/log'
+            ]
+        ],
         ['\Monolog\Handler\PHPConsoleHandler'],
     ],
 //    'env' => 'prod',

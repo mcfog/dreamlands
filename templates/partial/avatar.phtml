@@ -10,6 +10,6 @@ use Dreamlands\Plate\DTemplate;
 <span class="avatar u_<?= $user ? $user->name : '' ?>">
     <img src="<?= $this->userAvatar($user) ?>" alt="avatar">
     <span class="name">
-        <?= $user ? $user->name : str_repeat('&nbsp;', 8) ?>
+        <?= $user ? $user->getDisplayName() : str_repeat('&nbsp;', 8) ?>
     </span>
 </span>

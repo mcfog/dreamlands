@@ -93,18 +93,19 @@ class PostEntity extends DEntity
             throw new \Exception(__METHOD__ . '/' . __LINE__);
         }
 
-        return new self([
-            'parent' => $board,
-            'parent_id' => $board->id,
-            'user' => $userEntity,
-            'user_id' => $userEntity->id,
-            'type' => self::TYPE_THREAD,
-            'flag' => 0,
-            'title' => $title,
-            'content_type' => $contentType,
-            'content' => $content,
-            'via' => self::VIA_WEB,
-        ]);
+        $postEntity = new self;
+        $postEntity->parent = $board;
+        $postEntity->parent_id = $board->id;
+        $postEntity->user = $userEntity;
+        $postEntity->user_id = $userEntity->id;
+        $postEntity->type = self::TYPE_THREAD;
+        $postEntity->flag = 0;
+        $postEntity->title = $title;
+        $postEntity->content_type = $contentType;
+        $postEntity->content = $content;
+        $postEntity->via = self::VIA_WEB;
+
+        return $postEntity;
     }
 
     public static function newReply(
@@ -118,18 +119,19 @@ class PostEntity extends DEntity
             throw new \Exception(__METHOD__ . '/' . __LINE__);
         }
 
-        return new self([
-            'parent' => $thread,
-            'parent_id' => $thread->id,
-            'user' => $userEntity,
-            'user_id' => $userEntity->id,
-            'type' => self::TYPE_REPLY,
-            'flag' => 0,
-            'title' => $title,
-            'content_type' => $contentType,
-            'content' => $content,
-            'via' => self::VIA_WEB,
-        ]);
+        $postEntity = new self;
+        $postEntity->parent = $thread;
+        $postEntity->parent_id = $thread->id;
+        $postEntity->user = $userEntity;
+        $postEntity->user_id = $userEntity->id;
+        $postEntity->type = self::TYPE_REPLY;
+        $postEntity->flag = 0;
+        $postEntity->title = $title;
+        $postEntity->content_type = $contentType;
+        $postEntity->content = $content;
+        $postEntity->via = self::VIA_WEB;
+
+        return $postEntity;
     }
 
     public function attachReplyData(array $replyData)

@@ -4,21 +4,27 @@
   "main": "index.js",
   "author": "McFog Wang <mcfogw@gmail.com>",
   "license": "ISC",
+  "scripts": {
+    "webpack": "webpack",
+    "watch": "webpack -w"
+  },
   "dependencies": {
+    "file-loader": "^0.11.2",
+    "font-awesome": "^4.7.0",
     "minivents": "^2.0.2",
     "open-color": "^1.4.2",
     "purecss": "^0.6.2",
-    "umbrellajs": "^2.6.7"
+    "umbrellajs": "^2.7.0"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.26.2",
     "dot": "^1.1.1",
     "dot-loader": "^0.1.1",
-    "extract-text-webpack-plugin": "^2.0.0",
+    "extract-text-webpack-plugin": "^2.1.2",
     "node-sass": "^4.5.0",
-    "sass-loader": "^6.0.2",
+    "sass-loader": "^6.0.6",
     "style-loader": "^0.13.2",
-    "webpack": "^2.2.1"
+    "webpack": "^3.1.0"
   }
 }
