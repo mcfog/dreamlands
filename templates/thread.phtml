@@ -29,7 +29,7 @@ use Dreamlands\Plate\DTemplate;
 <?php if ($currentUser->getUser()) {
     $this->insert('partial/postbox', [
         'parent' => $thread
-    ]);
+        ] + get_defined_vars());
 } ?>
 
 <div class="thread">
@@ -62,7 +62,7 @@ use Dreamlands\Plate\DTemplate;
 </div>
 
 <style>
-    .post .avatar.u_<?= $thread->user->name ?> {
+    .post .avatar.u_<?= sha1($thread->user->getDisplayName()) ?> {
         font-weight: bold;
     }
 </style>

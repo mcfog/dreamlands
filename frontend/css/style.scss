@@ -63,19 +63,20 @@ a {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  min-height: 56px;
-  min-width: 56px;
+  min-height: 40px;
+  min-width: 40px;
 
   img {
     position: absolute;
     z-index: 80;
+    opacity: 0.4;
   }
 
   .name {
     display: inline-block;
     position: relative;
     z-index: 100;
-    background: hsla(210, 16%, 98%, 0.75);
+    //background: hsla(210, 16%, 98%, 0.6);
 
     line-height: 56px;
     font-family: monospace;

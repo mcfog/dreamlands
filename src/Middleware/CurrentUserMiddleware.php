@@ -10,8 +10,10 @@ use Psr\Http\Message\ResponseInterface;
 
 class CurrentUserMiddleware extends AbstractMiddleware
 {
+    const COOKIE_NAME = 'name';
     use MiddlewareTrait;
     const ATTR_KEY = self::class;
+    const COOKIE_HASH = 'hash';
 
     /**
      * @var FigCookiesMiddleware
@@ -51,7 +53,7 @@ class CurrentUserMiddleware extends AbstractMiddleware
             if ($user) {
                 return $user;
             } else {
-                throw new \RuntimeException('??……');
+                throw new \RuntimeException('但是可耻地失败了');
             }
         }
 
@@ -60,7 +62,7 @@ class CurrentUserMiddleware extends AbstractMiddleware
 
             do {
                 if (++$count > 3) {
-                    throw new \RuntimeException('自古枪兵……');
+                    throw new \RuntimeException('自古枪兵幸运E');
                 }
 
                 $this->user = $user = UserEntity::spawn($nickname);
@@ -78,6 +80,12 @@ class CurrentUserMiddleware extends AbstractMiddleware
         return $this->user;
     }
 
+    public function logout()
+    {
+        $this->cookie->setResponseCookie(self::COOKIE_HASH, '', null, 0, true, null, '/');
+        $this->cookie->setResponseCookie(self::COOKIE_NAME, '', null, 0, true, null, '/');
+    }
+
     protected function login($login)
     {
         list($name, $hash) = explode(':', $login);
@@ -92,10 +100,10 @@ class CurrentUserMiddleware extends AbstractMiddleware
 
     protected function writeCookie(UserEntity $userEntity)
     {
-        $this->cookie->setResponseCookie('hash', $userEntity->hash
+        $this->cookie->setResponseCookie(self::COOKIE_HASH, $userEntity->hash
             , null, time() + 365 * 86400, true, null, '/');
 
-        $this->cookie->setResponseCookie('name', $userEntity->getDisplayName()
+        $this->cookie->setResponseCookie(self::COOKIE_NAME, $userEntity->getDisplayName()
             , null, time() + 365 * 86400, true, null, '/');
     }
 
@@ -111,18 +119,18 @@ class CurrentUserMiddleware extends AbstractMiddleware
 
     protected function checkLogin()
     {
-        $hash = $this->cookie->getRequestCookie('hash');
+        $hash = $this->cookie->getRequestCookie(self::COOKIE_HASH);
         if (empty($hash)) {
             return;
         }
 
-        $this->user = $this->getAuthedUser($hash, $this->cookie->getRequestCookie('name'));
+        $this->user = $this->getAuthedUser($hash, $this->cookie->getRequestCookie(self::COOKIE_NAME));
     }
 
     protected function getAuthedUser($hash, $name)
     {
         $user = $this->repository->getUserByHash($hash);
-        if ($user->getDisplayName() === $name) {
+        if ($user && $user->getDisplayName() === $name) {
             return $user;
         }
 

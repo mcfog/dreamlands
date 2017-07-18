@@ -24,6 +24,11 @@ class SpawnAction extends DAction
                     ->message('你好，' . $user->getDisplayName())
                     ->render();
             }
+        } catch (\RuntimeException $e) {
+            return $this->message($e->getMessage())
+                ->mayBack(true)
+                ->render()
+                ->withStatus(400);
         } catch (\InvalidArgumentException $e) {
             return $this->message('非法的昵称')
                 ->mayBack(true)

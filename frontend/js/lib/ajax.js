@@ -15,6 +15,24 @@ export function post(path, body) {
     return request('POST', path, body);
 }
 
+export function handleMessage(response) {
+    if (!response.result.message) {
+        return response;
+    }
+
+    alert(response.result.message);
+    return Promise.reject({isError: false, result: null});
+}
+
+export function handleError(response) {
+    if (!response.isError) {
+        return response;
+    }
+
+    alert(response.result.message || '未知错误');
+    return {isError: false, result: null};
+}
+
 function request(method, path, body) {
     const headers = new Headers();
     headers.append('X-Requested-With', 'XMLHttpRequest');

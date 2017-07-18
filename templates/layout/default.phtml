@@ -29,7 +29,6 @@ use Dreamlands\Plate\DTemplate;
                     </li>
                 <?php endforeach; ?>
             </ul>
-            <?php $this->insert('partial/avatar', ['user' => $currentUser->getUser()]) ?>
         </div><!--end .nav-->
         <div class="main content pure-u-5-6">
             <?= $this->section('content') ?>

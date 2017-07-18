@@ -20,6 +20,7 @@ class AjaxMessageView extends AjaxView implements IMessageView
     {
         return parent::render(
             $data + [
+                'isAjaxMessage' => true,
                 'actions' => $this->actions,
                 'message' => $this->message,
             ]

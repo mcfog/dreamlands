@@ -7,7 +7,7 @@ use Dreamlands\Plate\DTemplate;
  * @var UserEntity $user
  */
 ?>
-<span class="avatar u_<?= $user ? $user->name : '' ?>">
+<span class="avatar u_<?= $user ? sha1($user->getDisplayName()) : '' ?>">
     <img src="<?= $this->userAvatar($user) ?>" alt="avatar">
     <span class="name">
         <?= $user ? $user->getDisplayName() : str_repeat('&nbsp;', 8) ?>

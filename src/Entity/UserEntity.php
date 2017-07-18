@@ -55,7 +55,7 @@ class UserEntity extends DEntity
 
         $user = new static();
         $user->nickname = $nickname;
-        $user->uniq = hexdec(substr(md5(uniqid('', true)), -8)) % (2 ** 14);
+        $user->uniq = crc32(uniqid('', true)) % (2 ** 14);
         $user->hash = sha1(uniqid('', true));
         $user->expire_at = time() + 72 * 86400;
 

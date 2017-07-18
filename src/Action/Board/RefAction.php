@@ -26,7 +26,7 @@ class RefAction extends DAction
             case PostEntity::TYPE_THREAD:
                 return $this->redirect('/t/' . $post->id);
             case PostEntity::TYPE_REPLY:
-                $from = Utility::base36($this->repo->getAnchor($post, ThreadAction::PERPAGE));
+                $from = Utility::base36($this->repo->getAnchor($post, ThreadAction::PERPAGE) - 1);
 
                 return $this->redirect(sprintf('/t/%d?from=%s#post-%08d', $post->parent_id, $from, $post->id));
             default:

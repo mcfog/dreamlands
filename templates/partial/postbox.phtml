@@ -44,8 +44,7 @@ use Dreamlands\Plate\DTemplate;
         <?php else: ?>
             <div class="pure-control-group">
                 <label for="post-sender" class="pure-u-1-6">发件人</label>
-                <input type="text" id="post-sender" class="pure-u-1-2 pure-input-rounded" autocomplete="off"
-                       value="<?= $this->e($currentUser->getUser()->getDisplayName()) ?>" readonly/>
+                <?php $this->insert('partial/avatar', ['user' => $currentUser->getUser()]) ?>
             </div>
             <div class="pure-control-group">
                 <label for="post-title" class="pure-u-1-6">标题</label>

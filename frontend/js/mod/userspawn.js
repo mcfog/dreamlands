@@ -1,5 +1,5 @@
 import {u} from "umbrellajs";
-import {post} from "lib/ajax";
+import {handleError, handleMessage, post} from "lib/ajax";
 import {modal} from "lib/modal";
 
 export function init() {
@@ -24,16 +24,15 @@ function onClickSpawnUserButton(e) {
 
     post('/user/spawn', {
         nickname: nickname
-    }).then(function (o) {
+    }).then(handleMessage).then(function (o) {
         console.log(o);
         if (o.isError) {
             return;
         }
 
-        elInput.value = [o.result.name, o.result.hash].join(':');
-    }, function (e) {
-        alert(e.message);
-    });
+        // elInput.value = [o.result.name, o.result.hash].join(':');
+        elInput.value = o.result.name;
+    }).catch(handleError);
 
-    modal.open('loading');
+    // modal.open('loading');
 }
