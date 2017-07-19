@@ -4,6 +4,7 @@
 $fa-font-path: "~font-awesome/fonts";
 @import '~font-awesome/scss/font-awesome';
 
+@import './pace';
 
 [class*=pure-u] {
   box-sizing: border-box;
@@ -16,8 +17,11 @@ $default-bgimg: "http://dn-mcfog-present.qbox.me/bg.jpg";
 body {
   background: $bg-clr;
   &.loading {
-    filter: blur(10px);
-    opacity: 0.8;
+    .main.container, .footer.container {
+      filter: blur(10px);
+      opacity: 0.8;
+      transition: opacity 1s;
+    }
   }
 }
 
@@ -69,7 +73,7 @@ a {
   img {
     position: absolute;
     z-index: 80;
-    opacity: 0.4;
+    opacity: 0.3;
   }
 
   .name {
@@ -78,7 +82,7 @@ a {
     z-index: 100;
     //background: hsla(210, 16%, 98%, 0.6);
 
-    line-height: 56px;
+    line-height: 40px;
     font-family: monospace;
     font-size: 14px;
   }

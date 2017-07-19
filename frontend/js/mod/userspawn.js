@@ -9,15 +9,18 @@ export function init() {
     ;
 }
 
-function onClickSpawnUserInput(e) {
-    let elInput = e.target;
+function onClickSpawnUserInput(event) {
+    let elInput = event.target;
+    if (elInput.value) {
+        return;
+    }
     elInput.removeAttribute('readonly');
     elInput.focus();
 }
 
-function onClickSpawnUserButton(e) {
-    e.preventDefault();
-    const elInput = u(e.target).closest('.j-spawn-user').find('input[type=text]').first();
+function onClickSpawnUserButton(event) {
+    event.preventDefault();
+    const elInput = u(event.target).closest('.j-spawn-user').find('input[type=text]').first();
     const nickname = elInput.value;
     elInput.value = '';
     elInput.setAttribute('readonly', '');
@@ -30,8 +33,13 @@ function onClickSpawnUserButton(e) {
             return;
         }
 
-        // elInput.value = [o.result.name, o.result.hash].join(':');
+        if (-1 === nickname.indexOf(':')) {
+            setTimeout(function () {
+                window.prompt("请保留好您的登录凭据", [o.result.name, o.result.hash].join(':'));
+            }, 500);
+        }
         elInput.value = o.result.name;
+        event.target.setAttribute('disabled', '');
     }).catch(handleError);
 
     // modal.open('loading');

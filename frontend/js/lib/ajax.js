@@ -1,4 +1,5 @@
 import {ajax} from "umbrellajs";
+import * as loading from "lib/loading";
 
 export function get(path) {
     return request('GET', path);
@@ -36,12 +37,14 @@ export function handleError(response) {
 function request(method, path, body) {
     const headers = new Headers();
     headers.append('X-Requested-With', 'XMLHttpRequest');
+    loading.start();
     return fetch(path, {
         method, body, headers,
         credentials: 'include'
     }).then(handle).then(wrapResult, wrapError);
 
     function handle(res) {
+        loading.stop();
         const type = res.headers.get('Content-Type');
         switch (type) {
             case 'application/json':

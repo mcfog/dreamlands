@@ -1,7 +1,8 @@
 import {ajax, u} from "umbrellajs";
+import {modal} from "lib/modal";
+import {get, handleError} from "lib/ajax";
 
 export function init() {
-
     u('.post-quote').each(initPostQuote);
 
     u(document.body)
@@ -47,25 +48,20 @@ function onClickPostNo(e) {
     area.focus();
 }
 
-function onClickFollowPost(e) {
+function onClickFollowPost(event) {
     var cancelled = false;
     modal.open(require('tpl/follow_post.dot.html')());
     modal.on('close', cancel);
 
-    ajax('/api/get-quote?id=' + e.target.dataset.post, {}, function (err, res) {
-        if (cancelled) {
-            return;
-        }
+    get('/api/get-quote?id=' + event.target.dataset.post).then(function (res) {
         cancel();
 
-        if (!res) {
-            alert('???');
-            modal.close();
-        } else {
-            modal.u('.loading').removeClass('loading').addClass('container');
-            modal.u('.post').html(res);
-            modal.u('.post-quote').each(initPostQuote);
-        }
+        modal.u('.loading').removeClass('loading').addClass('container');
+        modal.u('.post').html(res.result);
+        modal.u('.post-quote').each(initPostQuote);
+    }, function (e) {
+        modal.close();
+        return handleError(e);
     });
 
     function cancel() {

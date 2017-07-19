@@ -1,3 +1,5 @@
+import * as loading from "lib/loading";
+
 const PAGE = {
     'board-board': 'board',
     'board-thread': 'thread',

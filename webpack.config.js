@@ -10,7 +10,7 @@ const extractSass = new ExtractTextPlugin({
 module.exports = {
     entry: [
         './frontend/css/style.scss',
-        './frontend/js/main.js'
+        './frontend/js/main.js',
     ],
     output: {
         filename: 'js/[name].js',
@@ -34,15 +34,18 @@ module.exports = {
             {
                 test: /\.dot\.html$/,
                 loader: 'dot-loader'
-            }
-            ,
+            },
             {
                 test: /\.(svg|woff|woff2|ttf|eot)(\?.*$|$)/,
                 loader: 'file-loader',
                 query: {
                     name: '/fonts/[name].[ext]'
                 }
-            }
+            },
+            {
+                test: require.resolve("pace-progress"),
+                use: 'imports-loader?define=>false'
+            },
         ]
     },
     resolve: {
