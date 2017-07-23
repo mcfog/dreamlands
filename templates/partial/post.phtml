@@ -1,14 +1,16 @@
 <?php
+
 use Dreamlands\Entity\PostEntity;
 use Dreamlands\Plate\DTemplate;
 
 /**
  * @var DTemplate $this
  * @var PostEntity $post
+ * @var PostEntity[] $postChildren
  */
 ?>
 <div class="pure-g head">
-    <div class="pure-u-2-3">
+    <div class="pure-u-1-2">
         <div>
             <a href="javascript:void(0)"
                data-post="<?= sprintf('%08d', $post->id) ?>"
@@ -18,12 +20,14 @@ use Dreamlands\Plate\DTemplate;
             <?php if ($post->type === PostEntity::TYPE_THREAD): ?>
                 <a href="/t/<?= $post->id ?>" class="thread_link">[全文]</a>
             <?php else: ?>
-                <a href="/r/<?= $post->id ?>" class="muted" target="_blank">&#x29c9;</a>
+                <a href="/r/<?= $post->id ?>" class="muted" target="_blank">
+                    <i class="fa fa-external-link"></i>
+                </a>
             <?php endif ?>
         </div>
         <?= $this->postTitle($post) ?>
     </div>
-    <span class="pure-u-1-3">
+    <span class="pure-u-1-2">
         <span class="f-right">
             <small class="muted">
                 <?= date('Y-m-d H:i:s', $post->created_at) ?>
@@ -38,14 +42,14 @@ use Dreamlands\Plate\DTemplate;
     </div>
 </div>
 
-<?php if (!empty($showChildren) && $post->latest_childs): ?>
+<?php if (!empty($postChildren) && $post->latest_childs): ?>
     <div class="reply-list">
         <div class="muted desc">
             共计 <?= $post->child_count ?> 条回复，<a href="/t/<?= $post->id ?>?jump=latest" class="thread_link">最新回复</a>
         </div>
         <?php
-        foreach ($post->latest_childs as $child):
-            $childObj = PostEntity::fromArray($child);
+        foreach ($post->latest_childs as $id):
+            $childObj = $postChildren[$id];
 
             ?>
             <div class="reply post">

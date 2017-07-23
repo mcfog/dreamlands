@@ -4,9 +4,11 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Logging\DebugStack;
 use Dreamlands\Action\Etc\AkarinAction;
 use Dreamlands\Entity\PostEntity;
-use Dreamlands\Plate\PlateExtension;
+use Dreamlands\Middleware\SessionMiddelware;
+use Dreamlands\Plate\DPlateEngine;
 use Dreamlands\Repository\Repository;
 use Dreamlands\Utility\Inspector;
+use Dreamlands\Utility\RedisKeyValue;
 use League\Plates\Engine;
 use Lit\Bolt\BoltContainer;
 use Lit\Bolt\BoltRouteDefinition;
@@ -15,6 +17,8 @@ use Lit\Nexus\Cache\CacheKeyValue;
 use Lit\Nexus\Utilities\KeyValueUtility;
 use Monolog\Logger;
 use PhpConsole\Connector;
+use Predis\Client;
+use Predis\ClientInterface;
 use Psr\Log\LoggerInterface;
 use Spot\Config;
 use Spot\Locator;
@@ -58,12 +62,14 @@ class DContainer extends BoltContainer
         $this
             ->alias(DRouteDefinition::class, BoltRouteDefinition::class)
             ->alias(FileSystem::class, DriverInterface::class)
+            ->alias(Client::class, ClientInterface::class)
             ->alias(Logger::class, LoggerInterface::class, [
                 'name' => 'dreamland',
                 'handlers' => function () {
                     return $this->makeLoggerHandlers();
                 },
             ])
+            ->alias(DPlateEngine::class, Engine::class, [__DIR__ . '/../templates', 'phtml'])
             ->alias(CacheKeyValue::class, 'localCache',
                 [
                     function () {
@@ -80,7 +86,13 @@ class DContainer extends BoltContainer
             ->alias(Locator::class, 'db')
             ->alias(Pool::class, 'pool')
             ->alias(Repository::class, 'repo')
-            ->alias(Logger::class, 'logger');
+            ->alias(Logger::class, 'logger')
+            ->provideParameter(SessionMiddelware::class, [
+                'storage' => $this->instanceStub(RedisKeyValue::class, [
+                    'prefix' => 'session',
+                    'expire' => 86400 * 3000,
+                ])
+            ]);
 
         $this[Config::class] = function () {
             $config = new Config();
@@ -98,14 +110,6 @@ class DContainer extends BoltContainer
             });
 
             return $config;
-        };
-
-        $this[Engine::class] = function () {
-            $engine = new Engine(__DIR__ . '/../templates', 'phtml');
-            /** @noinspection PhpParamsInspection */
-            $engine
-                ->loadExtension($this->produce(PlateExtension::class));
-            return $engine;
         };
 
         $this['boards'] = function () {

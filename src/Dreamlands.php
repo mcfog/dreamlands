@@ -3,6 +3,7 @@
 use Doctrine\DBAL\Logging\DebugStack;
 use Dreamlands\Action\Etc\UnicornAction;
 use Dreamlands\Middleware\CurrentUserMiddleware;
+use Dreamlands\Middleware\SessionMiddelware;
 use Dreamlands\Utility\DContainerAwareTrait;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
@@ -22,7 +23,7 @@ class Dreamlands extends BoltApp
     protected function pipeMiddlewares()
     {
         if (!$this->container->envIsProd()) {
-            $this->pipe($this->sqlLogger());
+            $this->pipe($this->debugLogger());
         }
 
         /** @noinspection PhpParamsInspection */
@@ -30,6 +31,7 @@ class Dreamlands extends BoltApp
             ->pipe($this->errorHandler())
             ->pipe($this->container->produce(IpAddress::class))
             ->pipe($this->container->produce(FigCookiesMiddleware::class))
+            ->pipe($this->container->produce(SessionMiddelware::class))
             ->pipe($this->container->produce(CurrentUserMiddleware::class));
 
         parent::pipeMiddlewares();
@@ -38,7 +40,7 @@ class Dreamlands extends BoltApp
     /**
      * @return MiddlewareInterface
      */
-    protected function sqlLogger()
+    protected function debugLogger()
     {
         return new class($this->container) implements MiddlewareInterface
         {
@@ -46,6 +48,14 @@ class Dreamlands extends BoltApp
 
             public function process(ServerRequestInterface $request, DelegateInterface $delegate)
             {
+                $this->container->logger->info('request', [
+                    'Method' => $request->getMethod(),
+                    'ProtocolVersion' => $request->getProtocolVersion(),
+                    'Uri' => $request->getUri(),
+                    'RequestTarget' => $request->getRequestTarget(),
+                    'Headers' => $request->getHeaders(),
+                    'Body' => $request->getParsedBody(),
+                ]);
                 /**
                  * @var DContainer $this ->container
                  */

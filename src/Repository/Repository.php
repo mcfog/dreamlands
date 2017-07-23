@@ -1,5 +1,6 @@
 <?php namespace Dreamlands\Repository;
 
+use Dreamlands\Entity\ModeratorEntity;
 use Dreamlands\Entity\PostEntity;
 use Dreamlands\Entity\UserEntity;
 use Dreamlands\Spot\DEntity;
@@ -7,6 +8,7 @@ use Dreamlands\Spot\DMapper;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Spot\Locator;
+use Spot\Query;
 
 class Repository
 {
@@ -166,15 +168,27 @@ class Repository
         return $this->mapper($class)->get($id) ?: null;
     }
 
+    /**
+     * @param $class
+     * @param array $ids
+     * @return DEntity[]|Query
+     */
+    public function byIds($class, array $ids)
+    {
+        $mapper = $this->mapper($class);
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $mapper->where([
+            $mapper->primaryKeyField() => $ids
+        ]);
+    }
+
     public function doReply(PostEntity $thread, PostEntity $reply)
     {
         $unitOfWork = $this->makeUnitOfWork();
         $unitOfWork->persist($reply);
-        $data = $reply->toArray();
         $unitOfWork->commit();
 
-        $data['id'] = $reply->id;
-        $thread->attachReplyData($data);
+        $thread->attachLastReply($reply->id);
         $unitOfWork->persist($thread);
         $unitOfWork->commit();
     }
@@ -186,6 +200,16 @@ class Repository
             ->where([
                 'nickname' => $nickname,
                 'uniq' => $uniq
+            ])
+            ->first();
+    }
+
+    public function getModerator($provider, $id)
+    {
+        $openId = ModeratorEntity::getOpenId($provider, $id);
+        return $this->mapper(ModeratorEntity::class)
+            ->where([
+                'open_id' => $openId
             ])
             ->first();
     }

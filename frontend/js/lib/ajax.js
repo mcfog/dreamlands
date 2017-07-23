@@ -12,7 +12,6 @@ export function post(path, body) {
             body.append(k, obj[k]);
         });
     }
-    console.log(body);
     return request('POST', path, body);
 }
 

@@ -12,7 +12,7 @@
     - [ ] User相关mana限制
 - 用户
     - [ ] message inbox
-    - [ ] 饼干领取机制
+    - [x] 饼干领取机制
     - [ ] 固定用户机制
     - [ ] 管理员机制
     - [ ] expire
@@ -24,8 +24,4 @@
     - [ ] 链接
     - [ ] Markdown／bbcode等帖子内容格式
     - [ ] 图片
-    - [ ] mention    
-
-
-
-
+    - [ ] mention

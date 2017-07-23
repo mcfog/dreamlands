@@ -16,6 +16,10 @@ return array_merge_recursive([
         'Stash\Driver\FileSystem:options' => [
             'path' => __DIR__ . '/data/cache',
         ],
+        'Predis\Client::' => [
+            'parameters' => '',
+            'options' => [],
+        ],
     ],
     'env' => 'dev',
     'log' => [

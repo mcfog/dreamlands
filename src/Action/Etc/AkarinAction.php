@@ -9,6 +9,10 @@ class AkarinAction extends DAction
 
     protected function run(): ResponseInterface
     {
+        if ($this->isAjax()) {
+            return $this->message('not found')->render();
+        }
+
         return $this->plate('etc/akarin')->render();
     }
 }

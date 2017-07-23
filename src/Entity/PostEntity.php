@@ -1,6 +1,7 @@
 <?php namespace Dreamlands\Entity;
 
 use Doctrine\DBAL\Schema\Table;
+use Dreamlands\Exceptions\DException;
 use Dreamlands\Spot\DEntity;
 use Dreamlands\Utility\Utility;
 use Spot\EntityInterface;
@@ -54,7 +55,7 @@ class PostEntity extends DEntity
             'flag' => ['type' => 'integer', 'required' => true, 'default' => 0],
             'child_count' => ['type' => 'integer', 'value' => 0],
             'latest_childs' => ['type' => 'json_array', 'value' => []],
-            'title' => ['type' => 'string'],
+            'title' => ['type' => 'string', 'length' => 30],
             'content_type' => ['type' => 'smallint', 'required' => true],
             'content' => ['type' => 'text'],
             'created_at' => ['type' => 'integer', 'value' => time(), 'required' => true],
@@ -105,6 +106,9 @@ class PostEntity extends DEntity
         $postEntity->content = $content;
         $postEntity->via = self::VIA_WEB;
 
+
+        $postEntity->validate();
+
         return $postEntity;
     }
 
@@ -131,17 +135,19 @@ class PostEntity extends DEntity
         $postEntity->content = $content;
         $postEntity->via = self::VIA_WEB;
 
+        $postEntity->validate();
+
         return $postEntity;
     }
 
-    public function attachReplyData(array $replyData)
+    public function attachLastReply($id)
     {
         if ($this->type !== self::TYPE_THREAD) {
             throw new \Exception(__METHOD__ . '/' . __LINE__);
         }
 
         $this->child_count++;
-        $this->latest_childs[] = $replyData;
+        $this->latest_childs[] = $id;
         if (count($this->latest_childs) > 3) {
             array_shift($this->latest_childs);
         }
@@ -152,6 +158,16 @@ class PostEntity extends DEntity
     public function touch()
     {
         $this->touched_at = Utility::getNanotime();
+    }
+
+    public function validate()
+    {
+        if (mb_strlen($this->title) > 30) {
+            throw new DException('标题过长');
+        }
+        if (mb_strlen($this->content) > 1024) {
+            throw new DException('内容过长');
+        }
     }
 
     protected static function loadRelation($key, array $data)

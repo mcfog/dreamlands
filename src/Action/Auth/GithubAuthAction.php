@@ -1,6 +1,5 @@
 <?php namespace Dreamlands\Action\Auth;
 
-use Dflydev\FigCookies\SetCookie;
 use Dreamlands\DAction;
 use League\OAuth2\Client\Provider\Github;
 use Lit\Nexus\Interfaces\IPropertyInjection;
@@ -19,17 +18,20 @@ class GithubAuthAction extends DAction implements IPropertyInjection
     {
         return [
             'github' => Github::class,
-        ];
+            ] + parent::getInjectedProperties();
     }
 
     protected function run(): ResponseInterface
     {
+        if ($this->currentUser->getModerator()) {
+            return $this->message('已经登录')
+                ->mayBack(true)
+                ->render();
+        }
+        
         $url = $this->github->getAuthorizationUrl();
         $state = $this->github->getState();
-        $this->cookie->setResponseCookie('state',
-            SetCookie::create('state', $state)
-                ->withPath('/')
-        );
+        $this->cookie->setResponseCookie('state', $state, null, '/', null, null, true);
 
         return $this->redirect($url);
     }

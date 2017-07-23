@@ -1,6 +1,7 @@
 <?php namespace Dreamlands\Action\Auth;
 
 use Dreamlands\DAction;
+use Dreamlands\Entity\ModeratorEntity;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\Github;
 use Lit\Nexus\Interfaces\IPropertyInjection;
@@ -9,6 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 class GithubCallbackAction extends DAction implements IPropertyInjection
 {
     const PATH = '/auth/github/callback';
+    protected const MSG_LOGIN_FAIL = '登录失败……';
 
     /**
      * @var Github
@@ -19,7 +21,7 @@ class GithubCallbackAction extends DAction implements IPropertyInjection
     {
         return [
             'github' => Github::class,
-        ];
+            ] + parent::getInjectedProperties();
     }
 
     protected function run(): ResponseInterface
@@ -28,7 +30,7 @@ class GithubCallbackAction extends DAction implements IPropertyInjection
         $state = $this->getQueryParam('[state]');
 
         if ($this->cookie->getRequestCookie('state', false) !== $state) {
-            return $this->message('登录失败……')
+            return $this->message(self::MSG_LOGIN_FAIL)
                 ->mayBack(true)
                 ->render();
         }
@@ -37,13 +39,24 @@ class GithubCallbackAction extends DAction implements IPropertyInjection
                 'code' => $code,
             ]);
             $resourceOwner = $this->github->getResourceOwner($accessToken);
-            //DELETEME
-            echo '<xmp>' . PHP_EOL;
-            var_dump($accessToken, $resourceOwner->getId(), $resourceOwner->toArray());
-            die;
-            //DELETEME END
+
+            $githubUser = $resourceOwner->toArray();
+            $moderator = $this->repo->getModerator(ModeratorEntity::PROVIDER_GITHUB, $githubUser['login']);
+            if (!$moderator) {
+                return $this->message(self::MSG_LOGIN_FAIL)
+                    ->mayBack(true)
+                    ->render();
+            }
+
+            $this->currentUser->setModerator($moderator);
+
+            return $this->message('おかえり')
+                ->mayBack(true)
+                ->mayJump('/', '首页')
+                ->render();
+
         } catch (IdentityProviderException $e) {
-            return $this->message('登录失败……')
+            return $this->message(self::MSG_LOGIN_FAIL)
                 ->mayBack(true)
                 ->render();
         }

@@ -1,6 +1,6 @@
 import {u} from "umbrellajs";
 import {handleError, handleMessage, post} from "lib/ajax";
-import {modal} from "lib/modal";
+import * as Events from "minivents";
 
 export function init() {
     u(document.body)
@@ -8,6 +8,8 @@ export function init() {
         .on('click', '.j-spawn-user button', onClickSpawnUserButton)
     ;
 }
+
+export const emitter = new Events;
 
 function onClickSpawnUserInput(event) {
     let elInput = event.target;
@@ -20,7 +22,8 @@ function onClickSpawnUserInput(event) {
 
 function onClickSpawnUserButton(event) {
     event.preventDefault();
-    const elInput = u(event.target).closest('.j-spawn-user').find('input[type=text]').first();
+    const uContainer = u(event.target).closest('.j-spawn-user');
+    const elInput = uContainer.find('input[type=text]').first();
     const nickname = elInput.value;
     elInput.value = '';
     elInput.setAttribute('readonly', '');
@@ -28,7 +31,6 @@ function onClickSpawnUserButton(event) {
     post('/user/spawn', {
         nickname: nickname
     }).then(handleMessage).then(function (o) {
-        console.log(o);
         if (o.isError) {
             return;
         }
@@ -40,6 +42,7 @@ function onClickSpawnUserButton(event) {
         }
         elInput.value = o.result.name;
         event.target.setAttribute('disabled', '');
+        emitter.emit('spawn', o.result);
     }).catch(handleError);
 
     // modal.open('loading');

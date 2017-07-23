@@ -1,6 +1,7 @@
 <?php namespace Dreamlands\Action\User;
 
 use Dreamlands\DAction;
+use Dreamlands\Exceptions\DException;
 use Psr\Http\Message\ResponseInterface;
 
 class SpawnAction extends DAction
@@ -24,13 +25,8 @@ class SpawnAction extends DAction
                     ->message('你好，' . $user->getDisplayName())
                     ->render();
             }
-        } catch (\RuntimeException $e) {
+        } catch (DException $e) {
             return $this->message($e->getMessage())
-                ->mayBack(true)
-                ->render()
-                ->withStatus(400);
-        } catch (\InvalidArgumentException $e) {
-            return $this->message('非法的昵称')
                 ->mayBack(true)
                 ->render()
                 ->withStatus(400);

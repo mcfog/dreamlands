@@ -2,6 +2,7 @@
 
 
 use Doctrine\DBAL\Schema\Table;
+use Dreamlands\Exceptions\DException;
 use Dreamlands\Spot\DEntity;
 
 /**
@@ -50,7 +51,7 @@ class UserEntity extends DEntity
     public static function spawn($nickname)
     {
         if (!self::isValidNickname($nickname)) {
-            throw new \InvalidArgumentException('invalid nickname');
+            throw new DException('非法的昵称');
         }
 
         $user = new static();

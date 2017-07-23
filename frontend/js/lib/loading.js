@@ -9,8 +9,9 @@ window.paceOptions = {
 const Pace = require("pace-progress");
 
 export function start() {
+    if (Pace.running) return;
     document.body.classList.add('loading');
-    Pace.restart();
+    Pace.start();
 }
 
 export function stop() {

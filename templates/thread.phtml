@@ -1,4 +1,5 @@
 <?php
+
 use Dreamlands\Entity\PostEntity;
 use Dreamlands\Middleware\CurrentUserMiddleware;
 use Dreamlands\Plate\DTemplate;
@@ -26,11 +27,11 @@ use Dreamlands\Plate\DTemplate;
     </span>
 </div>
 
-<?php if ($currentUser->getUser()) {
-    $this->insert('partial/postbox', [
-        'parent' => $thread
-        ] + get_defined_vars());
-} ?>
+<div class="postbox-container">
+    <?php $this->insert('partial/postbox', [
+            'parent' => $thread
+        ] + get_defined_vars()) ?>
+</div>
 
 <div class="thread">
     <div class="post">
@@ -62,7 +63,7 @@ use Dreamlands\Plate\DTemplate;
 </div>
 
 <style>
-    .post .avatar.u_<?= sha1($thread->user->getDisplayName()) ?> {
+    .post .avatar.u_<?= $this->userHashId($thread->user) ?> {
         font-weight: bold;
     }
 </style>

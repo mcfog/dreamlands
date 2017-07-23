@@ -111,6 +111,13 @@ a {
 
   .title {
     font-weight: bold;
+    @extend .fa-envelope-o;
+    &::before {
+      @include fa-icon();
+      color: #868e96;
+      padding: 3px;
+      border-radius: 3px;
+    }
   }
 
   .content {
@@ -135,20 +142,20 @@ a {
     }
   }
 
-  .post-quote::before {
+  .post-quote {
     display: inline-block;
-    content: '\27A5';
-    color: #868e96;
-    padding: 3px;
-    border-radius: 3px;
+    margin-top: 0.5em;
+    @extend .fa-quote-left;
+    &::before {
+      @include fa-icon();
+      color: #868e96;
+      padding: 3px;
+      border-radius: 3px;
+    }
   }
 
   .post-quote.j-quote-follow {
     cursor: pointer;
-  }
-
-  .post-quote.j-quote-follow::before {
-    color: black;
   }
 }
 
@@ -296,6 +303,9 @@ body.modal {
   .main.content {
     padding: 1em;
     background: $bg-clr;
+  }
+  .full.content {
+    padding: 0 1em;
   }
 
   .nav {

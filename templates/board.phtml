@@ -1,4 +1,5 @@
 <?php
+
 use Dreamlands\Entity\PostEntity;
 use Dreamlands\Middleware\CurrentUserMiddleware;
 use Dreamlands\Plate\DTemplate;
@@ -8,6 +9,7 @@ use Dreamlands\Plate\DTemplate;
  * @var CurrentUserMiddleware $currentUser
  * @var PostEntity $board
  * @var PostEntity[] $posts
+ * @var PostEntity[] $postChildren
  * @var int $remain
  * @var int $from
  * @var string $next
@@ -28,7 +30,7 @@ use Dreamlands\Plate\DTemplate;
     <div class="post">
         <?php $this->insert('partial/post', [
             'post' => $post,
-            'showChildren' => true,
+            'postChildren' => $postChildren,
         ]) ?>
     </div>
     <?php endforeach ?>

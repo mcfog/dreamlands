@@ -38,9 +38,23 @@ class BoardAction extends DAction
             $next = '';
         }
 
+        $childId = [];
+        foreach ($posts as $postEntity) {
+            foreach ($postEntity->latest_childs as $id) {
+                $childId[$id] = true;
+            }
+        }
+
+        $children = $this->repo->byIds(PostEntity::class, array_keys($childId))->with('user');
+        $postChildren = [];
+        foreach ($children as $child) {
+            $postChildren[$child->id] = $child;
+        }
+
         return $this->plate('board')->render([
             'board' => $board,
             'posts' => $posts,
+            'postChildren' => $postChildren,
             'remain' => $remain,
             'next' => $next,
             'from' => $from,

@@ -3,8 +3,10 @@
 use Doctrine\Common\Inflector\Inflector;
 use Dreamlands\Action\Etc\AkarinAction;
 use Dreamlands\Action\Etc\UnicornAction;
+use Dreamlands\Exceptions\DException;
 use Dreamlands\Exceptions\ThrowableResult;
 use Dreamlands\Middleware\CurrentUserMiddleware;
+use Dreamlands\Middleware\SessionMiddelware;
 use Dreamlands\Plate\AjaxMessageView;
 use Dreamlands\Plate\AjaxView;
 use Dreamlands\Plate\IMessageView;
@@ -35,6 +37,11 @@ abstract class DAction extends BoltAction
      * @var FigCookiesMiddleware
      */
     protected $cookie;
+
+    /**
+     * @var SessionMiddelware
+     */
+    protected $session;
 
     /**
      * @var CurrentUserMiddleware
@@ -118,7 +125,7 @@ abstract class DAction extends BoltAction
     /**
      * @return \Psr\Http\Message\ResponseInterface
      */
-    protected function akarin()
+    protected function akarin(): ResponseInterface
     {
         /**
          * @var DAction $akarin
@@ -131,11 +138,17 @@ abstract class DAction extends BoltAction
     {
         if (!$this instanceof UnicornAction) {
             $this->cookie = FigCookiesMiddleware::fromRequest($this->request);
+            $this->session = SessionMiddelware::fromRequest($this->request);
             $this->currentUser = CurrentUserMiddleware::fromRequest($this->request);
         }
 
         try {
             return $this->run();
+        } catch (DException $exception) {
+            return $this->message($exception->getMessage())
+                ->mayJump('/', '首页')
+                ->mayBack(true)
+                ->render();
         } catch (ThrowableResult $result) {
             return $result->getResponse();
         } catch (\Throwable $e) {

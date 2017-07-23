@@ -16,6 +16,7 @@ use Dreamlands\Spot\DEntity;
 class ModeratorEntity extends DEntity
 {
     protected static $table = 'moderator';
+    const PROVIDER_GITHUB = 'github';
 
     public static function fields()
     {
@@ -26,5 +27,10 @@ class ModeratorEntity extends DEntity
             'is_super' => ['type' => 'boolean', 'value' => false, 'required' => true],
             'created_at' => ['type' => 'integer', 'value' => time(), 'required' => true],
         ];
+    }
+
+    public static function getOpenId($provider, $id)
+    {
+        return sprintf('%s:#%s', $provider, $id);
     }
 }

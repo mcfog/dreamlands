@@ -1,7 +1,7 @@
 <?php
+
 use Dreamlands\Plate\DTemplate;
 use Dreamlands\Plate\IMessageView;
-use Dreamlands\Plate\MessageView;
 
 /**
  * @see \Dreamlands\Action\Etc\UnicornAction::run
@@ -24,30 +24,35 @@ use Dreamlands\Plate\MessageView;
         color: #bbbbbb;
     }
 </style>
-<h3><?= $this->e($title ?? '提示信息') ?></h3>
+<h3><?= $this->e($title ?? '错的是这世界！') ?></h3>
 <pre><?= $this->e($message) ?></pre>
 
 <span class="muted">你可以…</span>
 <br><br>
-<ul>
+<ul class="pure-menu-list">
     <?php
     foreach ($actions as $idx => $action):
         $defaultClass = (isset($defaultAction) && $defaultAction === $idx) ? ' class="default"' : '';
         switch ($action[1]):
             case IMessageView::ACTION_BACK: ?>
                 <li<?= $defaultClass ?>>
+                    <i class="fa fa-arrow-circle-o-left"></i>
                     <a href="javascript:history.go(-1)"><?= $this->e($action[0]) ?></a>
                 </li>
                 <?php
                 break;
             case IMessageView::ACTION_REFRESH: ?>
                 <li<?= $defaultClass ?>>
+                    <i class="fa fa-refresh"></i>
                     <a href="javascript:location.reload()"><?= $this->e($action[0]) ?></a>
                 </li>
                 <?php
                 break;
             case IMessageView::ACTION_JUMP: ?>
                 <li<?= $defaultClass ?>>
+                    <i class="fa fa-arrow-circle-o-<?= /*黑科技，嘿嘿*/
+                    false !== strpos($action[0], '回') ? 'left' : 'right'
+                    ?>"></i>
                     <a href="<?= $this->e($action[2]) ?>"><?= $this->e($action[0]) ?></a>
                 </li>
                 <?php
@@ -56,6 +61,8 @@ use Dreamlands\Plate\MessageView;
     endforeach;
     ?>
 </ul>
+<br><br>
+
 
 <script>
     setTimeout(function () {

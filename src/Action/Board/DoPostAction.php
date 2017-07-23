@@ -2,6 +2,7 @@
 
 use Dreamlands\DAction;
 use Dreamlands\Entity\PostEntity;
+use Dreamlands\Exceptions\DException;
 use Dreamlands\Repository\UnitOfWork;
 use Psr\Http\Message\ResponseInterface;
 
@@ -19,7 +20,7 @@ class DoPostAction extends DAction
          */
         $parent = $this->repo->byId(PostEntity::class, $parentId);
         if (!$parent || $parent->type == PostEntity::TYPE_REPLY) {
-            throw new \Exception('invalid parent');
+            throw new DException('无法理解');
         }
 
         switch ($parent->type) {
@@ -77,10 +78,11 @@ class DoPostAction extends DAction
 
         $this->repo->doReply($thread, $reply);
         $board = $this->container->boards[$thread->parent_id];
+
         return $this
             ->message('回复成功')
-            ->mayJump('/t/' . $thread->id, '返回话题', true)
-            ->mayJump('/b/' . $board->id, sprintf('返回【%s】', $board->title), true)
+            ->mayJump('/t/' . $thread->id, '查看话题', true)
+            ->mayJump('/b/' . $board->id, sprintf('回到【%s】', $board->title), true)
             ->render();
     }
 }

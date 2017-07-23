@@ -1,7 +1,5 @@
 <?php namespace Dreamlands\Utility;
 
-use Nimo\MiddlewareErrorException;
-
 class Inspector
 {
     public static function errorHandler($errno, $errstr, $errfile, $errline)
@@ -39,14 +37,6 @@ HTML;
 
         echo $msg;
 
-        if ($exception instanceof MiddlewareErrorException) {
-            $error = $exception->getError();
-            if ($error instanceof \Throwable) {
-                self::exceptionHandler($error);
-            } else {
-                var_dump($error);
-            }
-        }
         exit(255);
     }
 
