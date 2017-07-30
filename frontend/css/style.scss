@@ -1,10 +1,11 @@
-@import '~purecss';
-@import '~open-color';
+@import "~purecss";
+@import "~open-color";
 
 $fa-font-path: "~font-awesome/fonts";
-@import '~font-awesome/scss/font-awesome';
+@import "~font-awesome/scss/font-awesome";
 
-@import './pace';
+@import "pace";
+@import "mixins";
 
 [class*=pure-u] {
   box-sizing: border-box;
@@ -111,18 +112,33 @@ a {
 
   .title {
     font-weight: bold;
-    @extend .fa-envelope-o;
     &::before {
-      @include fa-icon();
-      color: #868e96;
-      padding: 3px;
-      border-radius: 3px;
+      @include mixin-icon($fa-var-envelope-o);
+      color: $oc-gray-6;
     }
   }
 
   .content {
     margin: 0.25em 2em;
+    line-height: 1.5em;
     overflow: hidden;
+    word-wrap: break-word;
+    word-break: break-all;
+
+    a.external {
+      display: inline-block;
+
+      vertical-align: inherit;
+      max-width: 80%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      &::before {
+        @include mixin-icon($fa-var-link);
+        color: $oc-gray-6;
+      }
+    }
   }
 
   .content.collapsed {
@@ -148,7 +164,7 @@ a {
     @extend .fa-quote-left;
     &::before {
       @include fa-icon();
-      color: #868e96;
+      color: $oc-gray-6;
       padding: 3px;
       border-radius: 3px;
     }
@@ -312,3 +328,4 @@ body.modal {
     padding: 1em;
   }
 }
+

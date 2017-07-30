@@ -1,0 +1,6 @@
+@mixin mixin-icon($icon) {
+  @include fa-icon();
+  content: $icon;
+  padding: 3px;
+  border-radius: 3px;
+}

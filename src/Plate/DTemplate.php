@@ -48,13 +48,16 @@ class DTemplate extends Template
             case PostEntity::CONTENT_TYPE_PLAIN:
                 if (!empty($postEntity->content)) {
                     $lines = array_map(function ($line) {
-                        if (preg_match('/^>> (\d+)$/', trim($line), $matches)) {
-                            $line = htmlspecialchars($line);
-                            return <<<HTML
+                        switch (true) {
+                            case preg_match('/^>> (\d+)$/', trim($line), $matches):
+
+                                $line = htmlspecialchars($line);
+                                return <<<HTML
 <span class="post-quote" data-post="{$matches[1]}">{$matches[1]}</span>
 HTML;
+                            default:
+                                return self::linkify(htmlspecialchars($line));
                         }
-                        return htmlspecialchars($line);
                     }, explode("\n", $postEntity->content));
 
                     return implode('<br>', $lines);
@@ -65,6 +68,18 @@ HTML;
             default:
                 return '???';
         }
+    }
+
+    protected static function linkify($html)
+    {
+        //@ref http://www.catonmat.net/blog/my-favorite-regex/  [!-~]匹配除了空格以外的全部可见ascii字符
+        return preg_replace(<<<'REGEX'
+#((https?|magnet):[!-~]+)#
+REGEX
+            , <<<'HTML'
+ <a href="$1" class="external" rel="nofollow noopener noreferer" target="_blank">$1</a> 
+HTML
+            , $html);
     }
 
     public function postTitle(PostEntity $postEntity)
