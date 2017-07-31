@@ -1,5 +1,6 @@
 <?php namespace Dreamlands\Plate;
 
+use Dreamlands\DContainer;
 use Dreamlands\Entity\PostEntity;
 use Dreamlands\Entity\UserEntity;
 use Hashids\Hashids;
@@ -17,12 +18,17 @@ class DTemplate extends Template
      * @var Identicon
      */
     private $identicon;
+    /**
+     * @var DContainer
+     */
+    private $container;
 
-    public function __construct(Engine $engine, $name, Hashids $hashids, Identicon $identicon)
+    public function __construct(Engine $engine, $name, Hashids $hashids, Identicon $identicon, DContainer $container)
     {
         parent::__construct($engine, $name);
         $this->hashids = $hashids;
         $this->identicon = $identicon;
+        $this->container = $container;
     }
 
     public function userHashId(UserEntity $userEntity = null)
@@ -46,40 +52,15 @@ class DTemplate extends Template
             case PostEntity::CONTENT_TYPE_HTML:
                 return $postEntity->content;
             case PostEntity::CONTENT_TYPE_PLAIN:
-                if (!empty($postEntity->content)) {
-                    $lines = array_map(function ($line) {
-                        switch (true) {
-                            case preg_match('/^>> (\d+)$/', trim($line), $matches):
+                /**
+                 * @var PlainContentFormatter $formatter
+                 */
+                $formatter = $this->container->instantiate(PlainContentFormatter::class);
 
-                                $line = htmlspecialchars($line);
-                                return <<<HTML
-<span class="post-quote" data-post="{$matches[1]}">{$matches[1]}</span>
-HTML;
-                            default:
-                                return self::linkify(htmlspecialchars($line));
-                        }
-                    }, explode("\n", $postEntity->content));
-
-                    return implode('<br>', $lines);
-                }
-                return <<<'HTML'
-<span class="muted">无内容</span>
-HTML;
+                return $formatter->format($postEntity->content);
             default:
                 return '???';
         }
-    }
-
-    protected static function linkify($html)
-    {
-        //@ref http://www.catonmat.net/blog/my-favorite-regex/  [!-~]匹配除了空格以外的全部可见ascii字符
-        return preg_replace(<<<'REGEX'
-#((https?|magnet):[!-~]+)#
-REGEX
-            , <<<'HTML'
- <a href="$1" class="external" rel="nofollow noopener noreferer" target="_blank">$1</a> 
-HTML
-            , $html);
     }
 
     public function postTitle(PostEntity $postEntity)

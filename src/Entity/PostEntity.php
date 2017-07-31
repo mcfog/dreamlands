@@ -37,13 +37,11 @@ class PostEntity extends DEntity
     const CONTENT_TYPE_HTML = 2;
 //    const CONTENT_TYPE_MD = 3;
     const VIA_WEB = 'web';
-
-    protected static $table = 'post';
-
     public static $childTypeMap = [
         self::TYPE_BOARD => self::TYPE_THREAD,
         self::TYPE_THREAD => self::TYPE_REPLY,
     ];
+    protected static $table = 'post';
 
     public static function fields()
     {
@@ -90,7 +88,7 @@ class PostEntity extends DEntity
         $content,
         $contentType = self::CONTENT_TYPE_PLAIN
     ) {
-        if($board->type !== self::TYPE_BOARD) {
+        if ($board->type !== self::TYPE_BOARD) {
             throw new \Exception(__METHOD__ . '/' . __LINE__);
         }
 
@@ -110,6 +108,16 @@ class PostEntity extends DEntity
         $postEntity->validate();
 
         return $postEntity;
+    }
+
+    public function validate()
+    {
+        if (mb_strlen($this->title) > 30) {
+            throw new DException('标题过长');
+        }
+        if (mb_strlen($this->content) > 1024) {
+            throw new DException('内容过长');
+        }
     }
 
     public static function newReply(
@@ -158,16 +166,6 @@ class PostEntity extends DEntity
     public function touch()
     {
         $this->touched_at = Utility::getNanotime();
-    }
-
-    public function validate()
-    {
-        if (mb_strlen($this->title) > 30) {
-            throw new DException('标题过长');
-        }
-        if (mb_strlen($this->content) > 1024) {
-            throw new DException('内容过长');
-        }
     }
 
     protected static function loadRelation($key, array $data)
