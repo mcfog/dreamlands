@@ -39,6 +39,13 @@ a {
   }
 }
 
+.pure-button {
+  &.button-secondary {
+    color: white;
+    background-color: $oc-lime-6;
+  }
+}
+
 //</editor-fold>
 
 //<editor-fold desc="Utilities">
@@ -138,6 +145,11 @@ a {
         @include mixin-icon($fa-var-link);
         color: $oc-gray-6;
       }
+    }
+
+    img.external {
+      max-width: 100%;
+      margin: 0.5em 0;
     }
   }
 

@@ -11,17 +11,23 @@ class PlainContentFormatter
 <span class="muted">无内容</span>
 HTML;
         }
-        $lines = array_map([self::class, 'formatLine'], explode("\n", $content));
+        $lines = array_map([$this, 'formatLine'], explode("\n", $content));
 
         return implode('<br>', $lines);
     }
 
-    protected static function formatLine($line)
+    protected function formatLine($line)
     {
         switch (true) {
             case preg_match('/^>> (\d+)$/', trim($line), $matches):
                 return <<<HTML
 <span class="post-quote" data-post="{$matches[1]}">{$matches[1]}</span>
+HTML;
+
+            case !$this->hasImage && preg_match('#^!(https?:[!-~]+)$#', trim($line), $matches):
+                $this->hasImage = true;
+                return <<<HTML
+<img class="external" src="{$matches[1]}" alt="">
 HTML;
 
             default:
