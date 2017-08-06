@@ -16,32 +16,31 @@ use Dreamlands\Plate\DTemplate;
 
         <?php if (!$currentUser->getUser()): ?>
             <div class="pure-control-group j-spawn-user">
-                <label for="post-sender" class="pure-u-1-12">
+                <label for="post-sender">
                     <i class="fa fa-user-circle"></i>
                 </label>
-                <input type="text" id="post-sender" class="pure-u-1-2 pure-input-rounded" autocomplete="off"
-                       placeholder="点此输入你的昵称" readonly/>
+                <input type="text" id="post-sender" class="pure-input-rounded" autocomplete="off"
+                       maxlength="10" placeholder="点此输入你的昵称" readonly/>
 
-                <button class="pure-button pure-button-primary pure-u-1-12">
+                <button class="pure-button pure-button-primary" name="signIn">
                     <i class="fa fa-sign-in"></i>
                 </button>
             </div>
             <div class="pure-control-group">
-                <label for="post-title" class="pure-u-1-12">
+                <label for="post-title">
                     <i class="fa fa-envelope-o"></i>
                 </label>
-                <input type="text" name="title" id="post-title" class="pure-u-2-3" autocomplete="off" readonly/>
+                <input type="text" name="title" id="post-title" autocomplete="off" readonly/>
             </div>
             <div class="pure-control-group">
-                <label for="post-content" class="pure-u-1-12">
+                <label for="post-content">
                     <i class="fa fa-file-text-o"></i>
                 </label>
-                <textarea name="content" id="post-content" cols="30" rows="10" class="pure-u-19-24"
-                          maxlength="2048" readonly></textarea>
+                <textarea name="content" id="post-content" cols="30" rows="10" maxlength="2048" readonly></textarea>
             </div>
             <div class="pure-control-group">
-                <label class="pure-u-1-12">&nbsp;</label>
-                <div class="pure-u-19-24">
+                <label>&nbsp;</label>
+                <div class="pure-u">
                     <input type="submit"
                            value="<?= $parent->type === PostEntity::TYPE_BOARD ? '发布' : '回复' ?>"
                            class="pure-button pure-button-primary"
@@ -51,27 +50,26 @@ use Dreamlands\Plate\DTemplate;
             </div>
         <?php else: ?>
             <div class="pure-control-group">
-                <label for="post-sender" class="pure-u-1-12">
+                <label for="post-sender">
                     <i class="fa fa-user-circle"></i>
                 </label>
                 <?php $this->insert('partial/avatar', ['user' => $currentUser->getUser()]) ?>
             </div>
             <div class="pure-control-group">
-                <label for="post-title" class="pure-u-1-12">
+                <label for="post-title">
                     <i class="fa fa-envelope-o"></i>
                 </label>
-                <input name="title" id="post-title" class="pure-u-1-2" autocomplete="off" maxlength="30"/>
+                <input name="title" id="post-title" autocomplete="off" maxlength="30"/>
             </div>
             <div class="pure-control-group">
-                <label for="post-content" class="pure-u-1-12">
+                <label for="post-content">
                     <i class="fa fa-file-text-o"></i>
                 </label>
-                <textarea name="content" id="post-content" cols="30" rows="10" class="pure-u-19-24"
-                          maxlength="2048"></textarea>
+                <textarea name="content" id="post-content" cols="30" rows="10" maxlength="2048"></textarea>
             </div>
             <div class="pure-control-group">
-                <label class="pure-u-1-12">&nbsp;</label>
-                <div class="pure-u-19-24">
+                <label>&nbsp;</label>
+                <div class="pure-u">
                     <input type="submit"
                            value="<?= $parent->type === PostEntity::TYPE_BOARD ? '发布' : '回复' ?>"
                            class="pure-button pure-button-primary"

@@ -3,7 +3,7 @@ import {modal} from "lib/modal";
 import {get, handleError} from "lib/ajax";
 
 export function init() {
-    u('.post-quote').each(initPostQuote);
+    u('.post').each(initPost);
 
     u(document.body)
         .on('click', '.j-quote-follow', onClickFollowPost)
@@ -11,18 +11,30 @@ export function init() {
     ;
 }
 
+function initPost(elPost) {
+    u('img.external', elPost).on('error', onImgError);
+    if (!elPost.classList.contains('quote')) {
+        u('.post-quote', elPost).each(initPostQuote);
+    }
+}
 
 function initPostQuote(el) {
+    if (el._initPostQuote) {
+        return;
+    }
+    el._initPostQuote = true;
+
     const id = el.dataset.post;
     const uPost = u('#post-' + id).closest('.post');
     if (uPost.length > 0) {
-        const uQuote = u('<div class="quote post">').append(uPost.children('.head,.content').clone());
+        const uQuote = u('<div class="quote post">').append(uPost.children().clone());
         uQuote.find('[id]').each(function (el) {
             el.removeAttribute('id');
         });
-        uQuote.find('.quote').remove();
+        uQuote.find('.quote,.reply-list').remove();
         uQuote.find('.post-quote').addClass('j-quote-follow');
         u(el).after(uQuote);
+        initPost(uQuote.first());
     } else {
         el.classList.add('j-quote-follow');
     }
@@ -57,8 +69,9 @@ function onClickFollowPost(event) {
         cancel();
 
         modal.u('.loading').removeClass('loading').addClass('container');
-        modal.u('.post').html(res.result);
-        modal.u('.post-quote').each(initPostQuote);
+        const uPost = modal.u('.post');
+        uPost.html(res.result);
+        initPost(uPost.first());
     }, function (e) {
         modal.close();
         return handleError(e);
@@ -68,4 +81,14 @@ function onClickFollowPost(event) {
         modal.off('close', cancel);
         cancelled = true;
     }
+}
+
+function onImgError(event) {
+    if (!document.body.contains(event.target)) {
+        return;
+    }
+    const html = require('tpl/bad_img.dot.html')({
+        src: event.target.src
+    });
+    u(event.target).after(html).remove();
 }

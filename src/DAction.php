@@ -116,7 +116,9 @@ abstract class DAction extends BoltAction
         /** @noinspection PhpParamsInspection */
         $messageView = $this->attachView($this->container->instantiate($className, [
             'message' => $message,
-            'data' => $this->getGlobalViewData(),
+            'data' => $this->getGlobalViewData() + [
+                    'title' => '提示信息'
+                ],
         ]));
 
         return $messageView;

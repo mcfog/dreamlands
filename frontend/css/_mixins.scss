@@ -4,3 +4,19 @@
   padding: 3px;
   border-radius: 3px;
 }
+
+@mixin grid($w) {
+  box-sizing: border-box;
+
+  letter-spacing: normal;
+  word-spacing: normal;
+  vertical-align: top;
+  text-rendering: auto;
+  display: inline-block;
+  zoom: 1;
+
+  width: $w * 100%;
+  @if $w < 1 {
+    *width: $w * 99.95%;
+  }
+}

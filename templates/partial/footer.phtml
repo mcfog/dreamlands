@@ -1,14 +1,22 @@
 <?php
+
+use Dreamlands\Middleware\CurrentUserMiddleware;
 use Dreamlands\Plate\DTemplate;
 
 /**
  * @var DTemplate $this
  * @var array $queries
  * @var bool $isProd
+ * @var CurrentUserMiddleware $currentUser
  */
 ?>
 
 <div class="footer container">
+    <span class="f-left muted">
+    <?php if (!$currentUser->getModerator()): ?>
+        <a href="/auth/github">admin</a>
+    <?php endif ?>
+    </span>
     Made with ❤︎ by <a href="https://about.mcfog.wang" target="_blank">@mcfog</a>
     <?php if (!$isProd): ?>
         <small>NON-PRODUCTION</small>

@@ -66,8 +66,22 @@ a {
 
 //</editor-fold>
 
-.postbox label {
-  text-align: right;
+.postbox {
+  label {
+    text-align: right;
+  }
+  input#post-sender {
+    @include grid(1/3);
+  }
+  #post-title {
+    @include grid(1/2);
+  }
+  #post-content {
+    @include grid(2/3);
+  }
+  button[name=signIn] {
+    @include grid(1/12);
+  }
 }
 
 .avatar {
@@ -147,9 +161,25 @@ a {
       }
     }
 
-    img.external {
+    .external {
       max-width: 100%;
       margin: 0.5em 0;
+      .load-error {
+        &:before {
+          @include mixin-icon($fa-var-image);
+          color: $oc-gray-6;
+        }
+        a {
+          color: $oc-gray-6;
+        }
+
+        display: inline-block;
+        background: $oc-white;
+        padding: 1em;
+
+        user-select: none;
+        cursor: default;
+      }
     }
   }
 
@@ -224,6 +254,15 @@ a {
   &:hover {
     opacity: 1;
     transition: 1s;
+  }
+}
+
+.sidebar {
+  h1 {
+    text-align: center;
+  }
+  a.logo {
+    color: $oc-indigo-7;
   }
 }
 
@@ -331,13 +370,15 @@ body.modal {
   .main.content {
     padding: 1em;
     background: $bg-clr;
+    @include grid(5 / 6);
   }
   .full.content {
     padding: 0 1em;
+    @include grid(1);
   }
 
-  .nav {
+  .sidebar {
     padding: 1em;
+    @include grid(1 / 6);
   }
 }
-

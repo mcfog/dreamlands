@@ -24,7 +24,10 @@ HTML;
 <span class="post-quote" data-post="{$matches[1]}">{$matches[1]}</span>
 HTML;
 
-            case !$this->hasImage && preg_match('#^!(https?:[!-~]+)$#', trim($line), $matches):
+            case preg_match('#^!(https?:[!-~]+)$#', trim($line), $matches):
+                if ($this->hasImage) {
+                    return htmlspecialchars($line);
+                }
                 $this->hasImage = true;
                 return <<<HTML
 <img class="external" src="{$matches[1]}" alt="\n此处应有图片一张\n">
