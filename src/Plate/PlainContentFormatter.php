@@ -27,7 +27,7 @@ HTML;
             case !$this->hasImage && preg_match('#^!(https?:[!-~]+)$#', trim($line), $matches):
                 $this->hasImage = true;
                 return <<<HTML
-<img class="external" src="{$matches[1]}" alt="">
+<img class="external" src="{$matches[1]}" alt="\n此处应有图片一张\n">
 HTML;
 
             default:

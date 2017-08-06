@@ -10,7 +10,7 @@ use Dreamlands\Plate\DTemplate;
  */
 ?>
 <div class="pure-g head">
-    <div class="pure-u-1-2">
+    <div class="pure-u-7-12">
         <div>
             <a href="javascript:void(0)"
                data-post="<?= sprintf('%08d', $post->id) ?>"
@@ -27,7 +27,7 @@ use Dreamlands\Plate\DTemplate;
         </div>
         <?= $this->postTitle($post) ?>
     </div>
-    <span class="pure-u-1-2">
+    <span class="pure-u-5-12">
         <span class="f-right">
             <small class="muted">
                 <?= date('Y-m-d H:i:s', $post->created_at) ?>

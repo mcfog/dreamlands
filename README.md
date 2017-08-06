@@ -22,6 +22,6 @@
     - [x] reply preview
     - [x] quote引用
     - [x] 链接
-    - [ ] 图片
+    - [x] 图片
     - [ ] Markdown／bbcode等帖子内容格式
     - [ ] mention
