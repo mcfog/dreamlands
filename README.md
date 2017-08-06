@@ -6,6 +6,7 @@
 - [ ] API接口
 - 体验
     - [ ] 编辑框优化
+    - [ ] Responsive UI!
 - 限制
     - [ ] mana限制
     - [ ] IP相关mana限制
