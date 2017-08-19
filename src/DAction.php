@@ -69,10 +69,15 @@ abstract class DAction extends BoltAction
      */
     protected function plate(string $name)
     {
-        /** @noinspection PhpParamsInspection */
-        return $this->attachView($this->container->instantiate(PlateView::class, [
+        /**
+         * @var PlateView $view
+         */
+        $view = $this->container->instantiate(PlateView::class, [
             'name' => $name,
             'data' => $this->getGlobalViewData(),
+        ]);
+        return $this->attachView($view->setJsData([
+            'currentUser' => $this->currentUser
         ]));
     }
 

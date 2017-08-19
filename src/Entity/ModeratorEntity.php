@@ -29,7 +29,7 @@ class ModeratorEntity extends DEntity
         ];
     }
 
-    public static function getOpenId($provider, $id)
+    public static function mkOpenId($provider, $id)
     {
         return sprintf('%s:#%s', $provider, $id);
     }

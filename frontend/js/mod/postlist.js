@@ -1,6 +1,6 @@
 import {ajax, u} from "umbrellajs";
 import {modal} from "lib/modal";
-import {get, handleError} from "lib/ajax";
+import {get, handleError, handleMessage} from "lib/ajax";
 
 export function init() {
     u('.post').each(initPost);
@@ -65,17 +65,20 @@ function onClickFollowPost(event) {
     modal.open(require('tpl/follow_post.dot.html')());
     modal.on('close', cancel);
 
-    get('/api/get-quote?id=' + event.target.dataset.post).then(function (res) {
-        cancel();
+    get('/api/get-quote?id=' + event.target.dataset.post)
+        .then(handleMessage)
+        .then(function (res) {
+            cancel();
 
-        modal.u('.loading').removeClass('loading').addClass('container');
-        const uPost = modal.u('.post');
-        uPost.html(res.result);
-        initPost(uPost.first());
-    }, function (e) {
-        modal.close();
-        return handleError(e);
-    });
+            modal.u('.loading').removeClass('loading').addClass('container');
+            const uPost = modal.u('.post');
+            uPost.html(res.result);
+            initPost(uPost.first());
+        })
+        .catch(function (e) {
+            modal.close();
+            return handleError(e);
+        });
 
     function cancel() {
         modal.off('close', cancel);

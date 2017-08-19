@@ -6,6 +6,8 @@ use Psr\Http\Message\ResponseInterface;
 
 class PlateView extends DView
 {
+    private const JSDATA = '__jsdata__';
+
     /**
      * @var Engine
      */
@@ -14,6 +16,8 @@ class PlateView extends DView
      * @var string
      */
     private $name;
+
+    private $jsData = [];
 
 
     /**
@@ -30,12 +34,34 @@ class PlateView extends DView
     }
 
     /**
+     * @param array|string $key
+     * @param mixed $value
+     * @return $this
+     */
+    public function setJsData($key, $value = null)
+    {
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $this->setJsData($k, $v);
+            }
+        } elseif (is_string($key)) {
+            $this->jsData[$key] = $value;
+        } else {
+            throw new \InvalidArgumentException();
+        }
+
+        return $this;
+    }
+
+    /**
      * @param array $data
      * @return ResponseInterface
      */
     public function render(array $data = [])
     {
-        $this->getEmptyBody()->write($this->plate->render($this->name, $data + $this->data));
+        $this->getEmptyBody()->write($this->plate->render($this->name, [
+                self::JSDATA => $this->jsData
+            ] + $data + $this->data));
 
         return $this->response
             ->withHeader('Content-Type', 'text/html; charset=utf-8');

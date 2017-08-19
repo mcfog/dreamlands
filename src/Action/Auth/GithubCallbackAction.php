@@ -51,8 +51,7 @@ class GithubCallbackAction extends DAction implements IPropertyInjection
             $this->currentUser->setModerator($moderator);
 
             return $this->message('おかえり')
-                ->mayBack(true)
-                ->mayJump('/', '首页')
+                ->mayJump('/', '首页', true)
                 ->render();
 
         } catch (IdentityProviderException $e) {

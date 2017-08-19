@@ -8,12 +8,13 @@ use Dreamlands\Plate\DTemplate;
  * @var array $queries
  * @var bool $isProd
  * @var CurrentUserMiddleware $currentUser
+ * @var array $__jsdata__
  */
 ?>
 
 <div class="footer container">
     <span class="f-left muted">
-    <?php if (!$currentUser->getModerator()): ?>
+    <?php if ($currentUser && !$currentUser->getModerator()): ?>
         <a href="/auth/github">admin</a>
     <?php endif ?>
     </span>
@@ -27,3 +28,7 @@ use Dreamlands\Plate\DTemplate;
 <div id="modal-popup">
     <div class="container">El psy congroo</div>
 </div>
+
+<script>
+    window.JSDATA = <?=json_encode($__jsdata__)?>;
+</script>

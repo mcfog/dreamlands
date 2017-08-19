@@ -16,8 +16,6 @@ class SessionMiddelware extends AbstractMiddleware implements IKeyValue
     use EmbedKeyValueTrait;
     use KeyValueTrait;
 
-    const ATTR_KEY = self::class;
-
     protected $cookie;
     /**
      * @var IKeyValue

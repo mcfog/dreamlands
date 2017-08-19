@@ -12,10 +12,9 @@ use Psr\Http\Message\ResponseInterface;
 
 class CurrentUserMiddleware extends AbstractMiddleware
 {
-    const SESSION_MOD_ID = 'moderator_id';
     use MiddlewareTrait;
-    const ATTR_KEY = self::class;
 
+    const SESSION_MOD_ID = 'moderator_id';
     const COOKIE_NAME = 'name';
     const COOKIE_HASH = 'hash';
 
@@ -92,14 +91,6 @@ class CurrentUserMiddleware extends AbstractMiddleware
         return $this->user;
     }
 
-    public function logout()
-    {
-        $this->cookie->setResponseCookies([
-            self::COOKIE_HASH => '',
-            self::COOKIE_NAME => '',
-        ], null, '/', 0, null, true);
-    }
-
     protected function login($login)
     {
         list($name, $hash) = explode(':', $login);
@@ -112,6 +103,16 @@ class CurrentUserMiddleware extends AbstractMiddleware
         return $user;
     }
 
+    protected function getAuthedUser($hash, $name)
+    {
+        $user = $this->repository->getUserByHash($hash);
+        if ($user && $user->getDisplayName() === $name) {
+            return $user;
+        }
+
+        return null;
+    }
+
     protected function writeCookie(UserEntity $userEntity)
     {
         $this->cookie
@@ -121,6 +122,13 @@ class CurrentUserMiddleware extends AbstractMiddleware
             ], null, '/', time() + 365 * 86400, null, true);
     }
 
+    public function logout()
+    {
+        $this->cookie->setResponseCookies([
+            self::COOKIE_HASH => '',
+            self::COOKIE_NAME => '',
+        ], null, '/', 0, null, true);
+    }
 
     /**
      * @return ModeratorEntity|null
@@ -166,16 +174,6 @@ class CurrentUserMiddleware extends AbstractMiddleware
         if ($id) {
             $this->moderator = $this->repository->byId(ModeratorEntity::class, $id);
         }
-    }
-
-    protected function getAuthedUser($hash, $name)
-    {
-        $user = $this->repository->getUserByHash($hash);
-        if ($user && $user->getDisplayName() === $name) {
-            return $user;
-        }
-
-        return null;
     }
 
 }

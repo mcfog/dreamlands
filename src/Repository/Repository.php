@@ -165,7 +165,12 @@ class Repository
      */
     public function byId($class, $id)
     {
-        return $this->mapper($class)->get($id) ?: null;
+        $entity = $this->mapper($class)->get($id);
+        if (isset($entity->deleted_at)) {
+            return null;
+        }
+
+        return $entity ?: null;
     }
 
     /**
@@ -176,10 +181,16 @@ class Repository
     public function byIds($class, array $ids)
     {
         $mapper = $this->mapper($class);
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $mapper->where([
+        $conditions = [
             $mapper->primaryKeyField() => $ids
-        ]);
+        ];
+        if ($mapper->fieldExists('deleted_at')) {
+            $conditions += [
+                'deleted_at' => null,
+            ];
+        }
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $mapper->where($conditions);
     }
 
     public function doReply(PostEntity $thread, PostEntity $reply)
@@ -206,7 +217,7 @@ class Repository
 
     public function getModerator($provider, $id)
     {
-        $openId = ModeratorEntity::getOpenId($provider, $id);
+        $openId = ModeratorEntity::mkOpenId($provider, $id);
         return $this->mapper(ModeratorEntity::class)
             ->where([
                 'open_id' => $openId
