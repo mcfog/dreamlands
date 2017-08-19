@@ -1,6 +1,7 @@
 <?php namespace Dreamlands\Plate;
 
 use Dreamlands\DView;
+use Dreamlands\ViewModel\Wrapper;
 use League\Plates\Engine;
 use Psr\Http\Message\ResponseInterface;
 
@@ -19,6 +20,11 @@ class PlateView extends DView
 
     private $jsData = [];
 
+    /**
+     * @var Wrapper
+     */
+    private $wrapper;
+
 
     /**
      * PlateView constructor.
@@ -31,6 +37,13 @@ class PlateView extends DView
 
         $this->plate = $plate;
         $this->name = $name;
+    }
+
+    public static function getInjectedProperties()
+    {
+        return parent::getInjectedProperties() + [
+                'wrapper' => Wrapper::class
+            ];
     }
 
     /**
@@ -60,7 +73,7 @@ class PlateView extends DView
     public function render(array $data = [])
     {
         $this->getEmptyBody()->write($this->plate->render($this->name, [
-                self::JSDATA => $this->jsData
+                self::JSDATA => $this->wrapper->convertToJson($this->jsData)
             ] + $data + $this->data));
 
         return $this->response

@@ -5,12 +5,13 @@ use Dreamlands\Entity\UserEntity;
 use Dreamlands\Exceptions\DException;
 use Dreamlands\Repository\Repository;
 use Dreamlands\Repository\UnitOfWork;
+use Dreamlands\ViewModel\IExposed;
 use Lit\Core\AbstractMiddleware;
 use Lit\Middlewares\FigCookiesMiddleware;
 use Lit\Middlewares\Traits\MiddlewareTrait;
 use Psr\Http\Message\ResponseInterface;
 
-class CurrentUserMiddleware extends AbstractMiddleware
+class CurrentUserMiddleware extends AbstractMiddleware implements IExposed
 {
     use MiddlewareTrait;
 
@@ -152,6 +153,14 @@ class CurrentUserMiddleware extends AbstractMiddleware
         return $this;
     }
 
+    public function expose()
+    {
+        return [
+            'user' => $this->user,
+            'mod' => $this->moderator,
+        ];
+    }
+
     protected function main(): ResponseInterface
     {
         $this->cookie = FigCookiesMiddleware::fromRequest($this->request);
@@ -175,5 +184,4 @@ class CurrentUserMiddleware extends AbstractMiddleware
             $this->moderator = $this->repository->byId(ModeratorEntity::class, $id);
         }
     }
-
 }

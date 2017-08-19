@@ -4,6 +4,9 @@
 use Doctrine\DBAL\Schema\Table;
 use Dreamlands\Exceptions\DException;
 use Dreamlands\Spot\DEntity;
+use Dreamlands\ViewModel\ExposedByViewModelTrait;
+use Dreamlands\ViewModel\IExposed;
+use Dreamlands\ViewModel\UserViewModel;
 
 /**
  * Class UserEntity
@@ -18,8 +21,11 @@ use Dreamlands\Spot\DEntity;
  * @property int $expire_at
  * @property int $created_at
  */
-class UserEntity extends DEntity
+class UserEntity extends DEntity implements IExposed
 {
+    use ExposedByViewModelTrait;
+    const VIEW_MODEL_CLASS = UserViewModel::class;
+
     protected static $table = 'user';
 
     public static function fields()

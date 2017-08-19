@@ -17,4 +17,17 @@ class Utility
     {
         return (int)base_convert($str, 36, 10);
     }
+
+    public static function pluckObj($object, array $keys)
+    {
+        $result = new \stdClass();
+        foreach ($keys as $k => $v) {
+            if (is_int($k)) {
+                $result->{$v} = $object->{$v};
+            } else {
+                $result->{$k} = $v;
+            }
+        }
+        return $result;
+    }
 }

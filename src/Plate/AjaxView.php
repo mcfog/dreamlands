@@ -1,12 +1,24 @@
 <?php namespace Dreamlands\Plate;
 
-use Dreamlands\Utility\DViewTrait;
-use Lit\Core\JsonView;
+use Dreamlands\DView;
+use Dreamlands\ViewModel\Wrapper;
 
-class AjaxView extends JsonView
+class AjaxView extends DView
 {
-    use DViewTrait;
     protected $isError = false;
+
+    /**
+     * @var Wrapper
+     */
+    protected $wrapper;
+
+    public static function getInjectedProperties()
+    {
+        return parent::getInjectedProperties() + [
+                'wrapper' => Wrapper::class
+            ];
+    }
+
 
     public function renderError(string $message, array $detail = [])
     {
@@ -18,12 +30,18 @@ class AjaxView extends JsonView
             ]);
     }
 
+
     public function render(array $data = [])
     {
-        return parent::render([
+        $data = [
             'isError' => $this->isError,
             'result' => $data,
-        ]);
+        ];
+
+        $this->getEmptyBody()->write($this->wrapper->convertToJson($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+
+        return $this->response
+            ->withHeader('Content-Type', 'application/json');
     }
 
     /**
