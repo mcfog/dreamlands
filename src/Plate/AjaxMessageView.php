@@ -14,6 +14,7 @@ class AjaxMessageView extends AjaxView implements IMessageView
     public function __construct(string $message)
     {
         $this->message = $message;
+        parent::__construct();
     }
 
     public function render(array $data = []): ResponseInterface

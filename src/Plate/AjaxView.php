@@ -1,21 +1,21 @@
 <?php namespace Dreamlands\Plate;
 
 use Dreamlands\DView;
-use Dreamlands\ViewModel\Wrapper;
+use Dreamlands\ViewModel\ViewModelFactory;
 
 class AjaxView extends DView
 {
     protected $isError = false;
 
     /**
-     * @var Wrapper
+     * @var ViewModelFactory
      */
     protected $wrapper;
 
     public static function getInjectedProperties()
     {
         return parent::getInjectedProperties() + [
-                'wrapper' => Wrapper::class
+                'wrapper' => ViewModelFactory::class
             ];
     }
 

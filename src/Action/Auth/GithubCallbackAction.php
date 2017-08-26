@@ -34,30 +34,36 @@ class GithubCallbackAction extends DAction implements IPropertyInjection
                 ->mayBack(true)
                 ->render();
         }
-        try {
-            $accessToken = $this->github->getAccessToken('authorization_code', [
-                'code' => $code,
-            ]);
-            $resourceOwner = $this->github->getResourceOwner($accessToken);
 
-            $githubUser = $resourceOwner->toArray();
-            $moderator = $this->repo->getModerator(ModeratorEntity::PROVIDER_GITHUB, $githubUser['login']);
-            if (!$moderator) {
-                return $this->message(self::MSG_LOGIN_FAIL)
-                    ->mayBack(true)
-                    ->render();
-            }
+        $accessToken = $this->github->getAccessToken('authorization_code', [
+            'code' => $code,
+        ]);
+        $resourceOwner = $this->github->getResourceOwner($accessToken);
 
-            $this->currentUser->setModerator($moderator);
-
-            return $this->message('おかえり')
-                ->mayJump('/', '首页', true)
-                ->render();
-
-        } catch (IdentityProviderException $e) {
+        $githubUser = $resourceOwner->toArray();
+        $moderator = $this->repo->getModerator(ModeratorEntity::PROVIDER_GITHUB, $githubUser['login']);
+        if (!$moderator) {
             return $this->message(self::MSG_LOGIN_FAIL)
                 ->mayBack(true)
                 ->render();
         }
+
+        $this->currentUser->setModerator($moderator);
+
+        return $this->message('おかえり')
+            ->mayJump('/', '首页', true)
+            ->render();
+
+    }
+
+    protected function handleException(\Throwable $e): ResponseInterface
+    {
+        if ($e instanceof IdentityProviderException) {
+            return $this->message(self::MSG_LOGIN_FAIL)
+                ->mayBack(true)
+                ->render();
+        }
+
+        throw $e;
     }
 }

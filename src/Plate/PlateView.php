@@ -1,7 +1,7 @@
 <?php namespace Dreamlands\Plate;
 
 use Dreamlands\DView;
-use Dreamlands\ViewModel\Wrapper;
+use Dreamlands\ViewModel\ViewModelFactory;
 use League\Plates\Engine;
 use Psr\Http\Message\ResponseInterface;
 
@@ -21,9 +21,9 @@ class PlateView extends DView
     private $jsData = [];
 
     /**
-     * @var Wrapper
+     * @var ViewModelFactory
      */
-    private $wrapper;
+    protected $wrapper;
 
 
     /**
@@ -42,7 +42,7 @@ class PlateView extends DView
     public static function getInjectedProperties()
     {
         return parent::getInjectedProperties() + [
-                'wrapper' => Wrapper::class
+                'wrapper' => ViewModelFactory::class
             ];
     }
 

@@ -4,20 +4,15 @@ use Lit\Bolt\BoltContainerStub;
 
 abstract class AbstractViewModel implements IExposed
 {
-    public static function stub(array $extraParameters = [])
-    {
-        return BoltContainerStub::of(static::class, $extraParameters);
-    }
-
     public function toJson($option = 0)
     {
-        return json_encode($this->toArray(), $option);
+        return json_encode($this->toDataObject(), $option);
     }
 
-    abstract public function toArray();
+    abstract public function toDataObject();
 
     public function expose()
     {
-        return $this->toArray();
+        return $this->toDataObject();
     }
 }

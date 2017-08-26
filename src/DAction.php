@@ -150,7 +150,11 @@ abstract class DAction extends BoltAction
         }
 
         try {
-            return $this->run();
+            try {
+                return $this->run();
+            } catch (\Throwable $e) {
+                return $this->handleException($e);
+            }
         } catch (DException $exception) {
             return $this->message($exception->getMessage())
                 ->mayJump('/', '首页')
@@ -168,6 +172,11 @@ abstract class DAction extends BoltAction
 
             throw $e;
         }
+    }
+
+    protected function handleException(\Throwable $e): ResponseInterface
+    {
+        throw $e;
     }
 
     protected function throw(ResponseInterface $response)

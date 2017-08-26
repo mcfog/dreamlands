@@ -3,7 +3,7 @@
 use Dreamlands\DContainer;
 use Lit\Bolt\BoltContainerStub;
 
-class ViewModel extends AbstractViewModel
+class GenericViewModel extends AbstractViewModel
 {
     /**
      * @var mixed
@@ -23,12 +23,12 @@ class ViewModel extends AbstractViewModel
         $this->container = $container;
     }
 
-    public function toArray()
+    public function toDataObject()
     {
-        return self::mapToArray($this->data, $this->container);
+        return self::convert($this->data, $this->container);
     }
 
-    protected static function mapToArray($data, DContainer $container)
+    protected static function convert($data, DContainer $container)
     {
         if (is_scalar($data)) {
             return $data;
@@ -41,25 +41,25 @@ class ViewModel extends AbstractViewModel
         }
 
         if ($data instanceof IExposed) {
-            return self::mapToArray($data->expose(), $container);
+            return self::convert($data->expose(), $container);
         }
         if ($data instanceof BoltContainerStub) {
-            return self::mapToArray($data->instantiateFrom($container), $container);
+            return self::convert($data->instantiateFrom($container), $container);
         }
 
         if ($data instanceof \stdClass) {
-            $data = (array)$data;
+            return $data;
         }
         if (is_array($data) || $data instanceof \Traversable) {
-            $result = [];
+            $result = new \stdClass();
             foreach ($data as $key => $value) {
-                $result[$key] = self::mapToArray($value, $container);
+                $result->{$key} = self::convert($value, $container);
             }
             return $result;
         }
 
         if ($data instanceof \JsonSerializable) {
-            return json_decode(json_encode($data), true);
+            return json_decode(json_encode($data));
         }
 
         throw new \Exception('cannot convert this object');

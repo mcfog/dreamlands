@@ -1,9 +1,11 @@
 <?php namespace Dreamlands\ViewModel;
 
+use Lit\Bolt\BoltContainerStub;
+
 trait ExposedByViewModelTrait
 {
     public function expose()
     {
-        return call_user_func([static::VIEW_MODEL_CLASS, 'stub'], [$this]);
+        return BoltContainerStub::of(static::VIEW_MODEL_CLASS, [$this]);
     }
 }

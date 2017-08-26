@@ -20,9 +20,9 @@ class UserViewModel extends AbstractViewModel
         $this->hashids = $hashids;
     }
 
-    public function toArray()
+    public function toDataObject()
     {
-        return [
+        return (object)[
             'id' => $this->hashids->encode($this->userEntity->id),
             'display_name' => $this->userEntity->getDisplayName(),
         ];

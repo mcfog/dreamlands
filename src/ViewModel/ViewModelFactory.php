@@ -2,7 +2,7 @@
 
 use Dreamlands\DContainer;
 
-class Wrapper
+class ViewModelFactory
 {
     /**
      * @var DContainer
@@ -22,8 +22,9 @@ class Wrapper
         return $this->wrap($data)->toJson($option);
     }
 
-    public function wrap($data)
+    public function wrap($data): GenericViewModel
     {
-        return $this->container->instantiate(ViewModel::class, [$data]);
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->container->instantiate(GenericViewModel::class, [$data]);
     }
 }
