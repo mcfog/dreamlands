@@ -12,18 +12,6 @@ use Dreamlands\Plate\IMessageView;
  */
 ?>
 <?php $this->layout('layout/full', get_defined_vars()) ?>
-<style>
-    .default {
-        font-weight: bold;
-    }
-
-    .default::after {
-        text-indent: 1em;
-        font-weight: normal;
-        content: '(3秒后)';
-        color: #bbbbbb;
-    }
-</style>
 <h3><?= $this->e($title ?? '错的是这世界！') ?></h3>
 <pre><?= $this->e($message) ?></pre>
 

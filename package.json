@@ -9,9 +9,7 @@
     "watch": "webpack -w"
   },
   "dependencies": {
-    "file-loader": "^0.11.2",
     "font-awesome": "^4.7.0",
-    "imports-loader": "^0.7.1",
     "minivents": "^2.0.2",
     "open-color": "^1.4.2",
     "pace-progress": "^1.0.2",
@@ -19,11 +17,16 @@
     "umbrellajs": "^2.7.0"
   },
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.26.2",
     "dot": "^1.1.1",
     "dot-loader": "^0.1.1",
-    "extract-text-webpack-plugin": "^2.1.2",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "file-loader": "^0.11.2",
+    "imports-loader": "^0.7.1",
     "node-sass": "^4.5.3",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.13.2",

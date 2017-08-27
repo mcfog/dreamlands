@@ -50,6 +50,9 @@ class GenericViewModel extends AbstractViewModel
         if ($data instanceof \stdClass) {
             return $data;
         }
+        if (is_array($data) && (empty($data) || array_keys($data) === range(0, count($data) - 1))) {
+            return $data;
+        }
         if (is_array($data) || $data instanceof \Traversable) {
             $result = new \stdClass();
             foreach ($data as $key => $value) {

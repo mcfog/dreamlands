@@ -9,6 +9,7 @@ use Dreamlands\Plate\DPlateEngine;
 use Dreamlands\Repository\Repository;
 use Dreamlands\Utility\Inspector;
 use Dreamlands\Utility\RedisKeyValue;
+use Hashids\Hashids;
 use League\Plates\Engine;
 use Lit\Bolt\BoltContainer;
 use Lit\Bolt\BoltRouteDefinition;
@@ -92,6 +93,9 @@ class DContainer extends BoltContainer
                     'prefix' => 'session',
                     'expire' => 86400 * 3000,
                 ])
+            ])
+            ->provideParameter(Hashids::class, [
+                'minHashLength' => 4
             ]);
 
         $this[Config::class] = function () {

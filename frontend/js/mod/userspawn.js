@@ -1,6 +1,6 @@
 import {u} from "umbrellajs";
 import {handleError, handleMessage, post} from "lib/ajax";
-import * as Events from "minivents";
+import Events from "minivents";
 
 export function init() {
     u(document.body)

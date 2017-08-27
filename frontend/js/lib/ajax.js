@@ -1,5 +1,6 @@
 import {ajax} from "umbrellajs";
 import * as loading from "lib/loading";
+import {message} from "lib/modal";
 
 export function get(path) {
     return request('GET', path);
@@ -8,7 +9,7 @@ export function post(path, body) {
     if (Object.prototype.isPrototypeOf(body)) {
         const obj = body;
         body = new FormData;
-        Object.keys(obj).forEach(function (k) {
+        Object.keys(obj).forEach((k) => {
             body.append(k, obj[k]);
         });
     }
@@ -20,8 +21,7 @@ export function handleMessage(response) {
         return response;
     }
 
-    alert(response.result.message);
-    return Promise.reject({isError: false, result: null});
+    return Promise.reject({isError: false, result: message.alert(response.result.message, response.result)});
 }
 
 export function handleError(response) {
@@ -29,8 +29,10 @@ export function handleError(response) {
         return response;
     }
 
-    alert(response.result.message || '未知错误');
-    return {isError: false, result: null};
+    return {
+        isError: false,
+        result: message.alert(response.result.message || '未知错误', response.result)
+    };
 }
 
 function request(method, path, body) {
@@ -47,13 +49,9 @@ function request(method, path, body) {
         const type = res.headers.get('Content-Type');
         switch (type) {
             case 'application/json':
-                return res.json().then(function (o) {
-                    if (o.isError) {
-                        return Promise.reject(o.result);
-                    }
-
-                    return o.result;
-                });
+                return res.json().then((o) =>
+                    o.isError ? Promise.reject(o.result) : o.result
+                );
             default:
                 return res.text();
         }

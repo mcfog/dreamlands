@@ -1,11 +1,12 @@
 @import "~purecss";
-@import "~open-color";
+@import "~open-color/open-color.scss";
 
 $fa-font-path: "~font-awesome/fonts";
 @import "~font-awesome/scss/font-awesome";
 
 @import "pace";
 @import "mixins";
+@import "utilities";
 
 [class*=pure-u] {
   box-sizing: border-box;
@@ -46,6 +47,18 @@ a {
   }
 }
 
+.pure-menu-list {
+  .default {
+    font-weight: bold;
+  }
+
+  .default::after {
+    text-indent: 1em;
+    font-weight: normal;
+    content: '(3秒后)';
+    color: #bbbbbb;
+  }
+}
 //</editor-fold>
 
 //<editor-fold desc="Utilities">
@@ -323,6 +336,7 @@ body.modal {
   }
 
   .modal-header {
+    @extend .clearfix;
     background-color: $oc-gray-7;
     color: $oc-white;
     margin: 0;

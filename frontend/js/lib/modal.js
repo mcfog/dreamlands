@@ -1,22 +1,23 @@
-import * as Events from "minivents";
+import Events from "minivents";
 import {u} from "umbrellajs";
+import {once} from "lib/utility";
 
 export const modal = {
-    open: function (inner) {
+    open(inner) {
         const uPop = this.u();
         document.body.classList.add('modal');
         uPop.empty();
         uPop.append(inner);
     },
-    close: function () {
+    close() {
         this.u().children().remove();
         document.body.classList.remove('modal');
         this.emit('close');
     },
-    isOpen: function () {
+    isOpen() {
         return document.body.classList.contains('modal');
     },
-    u: function (selector) {
+    u(selector) {
         if (!this._uPopup) {
             this._uPopup = u('#modal-popup');
         }
@@ -33,3 +34,17 @@ function onClickBody(e) {
         modal.close();
     }
 }
+
+export const message = {
+    alert(message, option) {
+        option = Object.assign({
+            message
+        }, option);
+
+        return new Promise((resolve, reject) => {
+            console.log(option);
+            modal.open(require('tpl/message.dot.html')(option));
+            once(modal, 'close', resolve);
+        });
+    }
+};

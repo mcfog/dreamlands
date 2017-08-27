@@ -20,3 +20,14 @@
     *width: $w * 99.95%;
   }
 }
+
+@mixin clearfix() {
+  &:before,
+  &:after {
+    content: " "; // 1
+    display: table; // 2
+  }
+  &:after {
+    clear: both;
+  }
+}
