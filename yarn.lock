@@ -3621,6 +3621,10 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "~1.0.0"
     spdx-expression-parse "~1.0.0"
 
+vce@^0.1.3:
+  version "0.1.9"
+  resolved "http://registry.npm.taobao.org/vce/download/vce-0.1.9.tgz#ad1780b01d9ff3a88343c8857590dc6f8656a417"
+
 vendors@^1.0.0:
   version "1.0.1"
   resolved "http://registry.npm.taobao.org/vendors/download/vendors-1.0.1.tgz#37ad73c8ee417fb3d580e785312307d274847f22"
