@@ -17,8 +17,8 @@
   "require": {
     "dflydev/fig-cookies": "^1.0",
     "league/plates": "^3.3",
-    "litphp/bolt": "dev-master",
-    "litphp/middlewares": "dev-master",
+    "litphp/bolt": "^0.2",
+    "litphp/middlewares": "^0.6",
     "symfony/finder": "^3.2",
     "tedivm/stash": "^0.14",
     "vlucas/spot2": "^2.2",

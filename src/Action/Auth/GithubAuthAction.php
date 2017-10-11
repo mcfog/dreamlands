@@ -2,10 +2,9 @@
 
 use Dreamlands\DAction;
 use League\OAuth2\Client\Provider\Github;
-use Lit\Nexus\Interfaces\IPropertyInjection;
 use Psr\Http\Message\ResponseInterface;
 
-class GithubAuthAction extends DAction implements IPropertyInjection
+class GithubAuthAction extends DAction
 {
     const PATH = '/auth/github';
 
@@ -14,11 +13,10 @@ class GithubAuthAction extends DAction implements IPropertyInjection
      */
     protected $github;
 
-    public static function getInjectedProperties()
+    public function injectGithub(Github $github)
     {
-        return [
-            'github' => Github::class,
-            ] + parent::getInjectedProperties();
+        $this->github = $github;
+        return $this;
     }
 
     protected function run(): ResponseInterface

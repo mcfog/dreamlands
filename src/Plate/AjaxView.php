@@ -2,23 +2,18 @@
 
 use Dreamlands\DView;
 use Dreamlands\ViewModel\ViewModelFactory;
+use Lit\Air\Injection\SetterInjector;
 
 class AjaxView extends DView
 {
+    const SETTER_INJECTOR = SetterInjector::class;
+
     protected $isError = false;
 
     /**
      * @var ViewModelFactory
      */
     protected $wrapper;
-
-    public static function getInjectedProperties()
-    {
-        return parent::getInjectedProperties() + [
-                'wrapper' => ViewModelFactory::class
-            ];
-    }
-
 
     public function renderError(string $message, array $detail = [])
     {
@@ -52,6 +47,18 @@ class AjaxView extends DView
     public function setIsError(bool $isError)
     {
         $this->isError = $isError;
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ViewModelFactory $wrapper
+     * @return $this
+     */
+    public function injectWrapper(ViewModelFactory $wrapper)
+    {
+        $this->wrapper = $wrapper;
 
         return $this;
     }

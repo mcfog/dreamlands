@@ -39,13 +39,6 @@ class PlateView extends DView
         $this->name = $name;
     }
 
-    public static function getInjectedProperties()
-    {
-        return parent::getInjectedProperties() + [
-                'wrapper' => ViewModelFactory::class
-            ];
-    }
-
     /**
      * @param array|string $key
      * @param mixed $value
@@ -78,6 +71,18 @@ class PlateView extends DView
 
         return $this->response
             ->withHeader('Content-Type', 'text/html; charset=utf-8');
+    }
+
+    /**
+     *
+     * @param ViewModelFactory $wrapper
+     * @return $this
+     */
+    public function injectWrapper(ViewModelFactory $wrapper)
+    {
+        $this->wrapper = $wrapper;
+
+        return $this;
     }
 
 }

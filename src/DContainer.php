@@ -9,10 +9,12 @@ use Dreamlands\Plate\DPlateEngine;
 use Dreamlands\Repository\Repository;
 use Dreamlands\Utility\Inspector;
 use Dreamlands\Utility\RedisKeyValue;
+use FastRoute\Dispatcher\GroupCountBased;
 use Hashids\Hashids;
 use League\Plates\Engine;
+use Lit\Air\Configurator;
+use Lit\Air\Factory;
 use Lit\Bolt\BoltContainer;
-use Lit\Bolt\BoltRouteDefinition;
 use Lit\Bolt\BoltRouter;
 use Lit\Nexus\Cache\CacheKeyValue;
 use Lit\Nexus\Utilities\KeyValueUtility;
@@ -45,119 +47,148 @@ class DContainer extends BoltContainer
 
     protected $env;
 
-    public function __construct(array $values = [])
+    public function __construct(?array $config = null)
     {
         set_error_handler([Inspector::class, 'errorHandler']);
         set_exception_handler([Inspector::class, 'exceptionHandler']);
 
-        $this[BoltRouter::class . '::'] = [
-            'cache' => function () {
-                return $this->localCache->slice('route');
-            },
-            'notFound' => AkarinAction::class,
-        ];
-        $this['config'] = require(__DIR__ . '/../config.php');
+        $this->set('config', require(__DIR__ . '/../config.php'));
 
-        parent::__construct($values);
+        parent::__construct(($config ?: []) + [
+                BoltRouter::class => (object)[
+                    'autowire',
+                    null,
+                    [
+                        'cache' => function () {
+                            return $this->localCache->slice('route');
+                        },
+                        'routeDefinition' => (object)['autowire', DRouteDefinition::class],
+                        'dispatcherClass' => GroupCountBased::class,
+                        'notFound' => (object)['autowire', AkarinAction::class],
+                    ]
+                ],
 
-        $this
-            ->alias(DRouteDefinition::class, BoltRouteDefinition::class)
-            ->alias(FileSystem::class, DriverInterface::class)
-            ->alias(Client::class, ClientInterface::class)
-            ->alias(Logger::class, LoggerInterface::class, [
-                'name' => 'dreamland',
-                'handlers' => function () {
-                    return $this->makeLoggerHandlers();
+                DriverInterface::class => (object)['autowire', FileSystem::class],
+                ClientInterface::class => (object)['autowire', Client::class],
+                LoggerInterface::class => (object)[
+                    'autowire',
+                    Logger::class,
+                    [
+                        'name' => 'dreamland',
+                        'handlers' => function () {
+                            return $this->makeLoggerHandlers();
+                        },
+                    ]
+                ],
+                Engine::class => (object)['autowire', DPlateEngine::class, [__DIR__ . '/../templates', 'phtml']],
+
+
+                'localCache' => (object)[
+                    'instance',
+                    'decorator' => ['cache' => null],
+                    CacheKeyValue::class,
+                    [
+                        function () {
+                            /**
+                             * @var Pool $pool
+                             */
+                            $pool = $this->pool;
+                            $this->events->addListener(Dreamlands::EVENT_AFTER_LOGIC, [$pool, 'commit']);
+
+                            return $pool;
+                        },
+                        86400
+                    ],
+                ],
+
+                'db' => (object)['autowire', Locator::class],
+                'pool' => (object)['autowire', Pool::class],
+                'repo' => (object)['autowire', Repository::class],
+                'logger' => (object)['alias', LoggerInterface::class],
+
+                SessionMiddelware::class => (object)[
+                    'autowire',
+                    null,
+                    [
+                        'storage' => (object)[
+                            'instance',
+                            RedisKeyValue::class,
+                            [
+                                'prefix' => 'session',
+                                'expire' => 86400 * 3000,
+                            ]
+                        ],
+                    ]
+                ],
+                Hashids::class => (object)[
+                    'autowire',
+                    null,
+                    [
+                        'minHashLength' => 4
+                    ]
+                ],
+
+                Config::class => function () {
+                    $config = new Config();
+                    /**
+                     * @var Connection $connection
+                     */
+                    $connection = call_user_func_array([$config, 'addConnection'], $this->config('[db]'));
+
+                    if (!$this->envIsProd()) {
+                        $connection->getConfiguration()->setSQLLogger(Factory::of($this)->produce(DebugStack::class));
+                    }
+
+                    $this->events->addListener(Dreamlands::EVENT_AFTER_LOGIC, function () {
+                        $this->repo->getUnitOfWork()->commit();
+                    });
+
+                    return $config;
                 },
-            ])
-            ->alias(DPlateEngine::class, Engine::class, [__DIR__ . '/../templates', 'phtml'])
-            ->alias(CacheKeyValue::class, 'localCache',
-                [
-                    function () {
-                        /**
-                         * @var Pool $pool
-                         */
-                        $pool = $this->pool;
-                        $this->events->addListener(Dreamlands::EVENT_AFTER_LOGIC, [$pool, 'commit']);
+                'boards' => function () {
+                    return KeyValueUtility::getOrSet($this->localCache->sliceExpire('boards', 600), function () {
+                        $boards = $this->repo->getBoardsArray();
 
-                        return $pool;
-                    },
-                    86400
-                ])
-            ->alias(Locator::class, 'db')
-            ->alias(Pool::class, 'pool')
-            ->alias(Repository::class, 'repo')
-            ->alias(Logger::class, 'logger')
-            ->provideParameter(SessionMiddelware::class, [
-                'storage' => $this->instanceStub(RedisKeyValue::class, [
-                    'prefix' => 'session',
-                    'expire' => 86400 * 3000,
-                ])
-            ])
-            ->provideParameter(Hashids::class, [
-                'minHashLength' => 4
-            ]);
+                        return array_combine(array_map(function (PostEntity $board) {
+                            return $board->id;
+                        }, $boards), $boards);
+                    });
+                },
 
-        $this[Config::class] = function () {
-            $config = new Config();
-            /**
-             * @var Connection $connection
-             */
-            $connection = call_user_func_array([$config, 'addConnection'], $this->config('[db]'));
+            ]
+        );
 
-            if (!$this->envIsProd()) {
-                $connection->getConfiguration()->setSQLLogger($this->produce(DebugStack::class));
-            }
-
-            $this->events->addListener(Dreamlands::EVENT_AFTER_LOGIC, function () {
-                $this->repo->getUnitOfWork()->commit();
-            });
-
-            return $config;
-        };
-
-        $this['boards'] = function () {
-            return KeyValueUtility::getOrSet($this->localCache->sliceExpire('boards', 600), function () {
-                $boards = $this->repo->getBoardsArray();
-
-                return array_combine(array_map(function (PostEntity $board) {
-                    return $board->id;
-                }, $boards), $boards);
-            });
-        };
 
         if (!$this->envIsProd()) {
-            $this[Connector::class] = function () {
-                return Connector::getInstance();
-            };
-            $this->alias(BlackHole::class, DriverInterface::class);
+            $this
+                ->define(Connector::class, self::multiton([Connector::class, 'getInstance']))
+                ->define(DriverInterface::class, self::autowire(BlackHole::class));
         }
 
-        foreach ($this->config('[container]', []) as $key => $value) {
-            $this[$key] = $value;
-        }
-    }
-
-    /**
-     * @return array
-     */
-    private function makeLoggerHandlers()
-    {
-        return array_map(function (array $handler) {
-            $param = $handler[1]??[];
-            return $this->instantiate($handler[0], $param);
-        },
-            $this->config('[log]', []));
+        Configurator::config($this, $this->config('[container]', []));
     }
 
     public function config($key, $default = null)
     {
-        return $this->get($this->offsetGet('config'), $key, $default);
+        return $this->access($this->config, $key, $default);
     }
 
     public function envIsProd()
     {
         return $this->getEnv() === self::ENV_PROD;
+    }
+
+    public function getOrProduce($classname)
+    {
+        if ($this->has($classname)) {
+            return $this->get($classname);
+        }
+        return Factory::of($this)->produce($classname);
+    }
+
+    public function instantiate(string $className, array $extraParameters = [])
+    {
+        return Factory::of($this)->instantiate($className, $extraParameters);
     }
 
     /**
@@ -170,5 +201,17 @@ class DContainer extends BoltContainer
         }
 
         return $this->env;
+    }
+
+    /**
+     * @return array
+     */
+    private function makeLoggerHandlers()
+    {
+        return array_map(function (array $handler) {
+            $param = $handler[1] ?? [];
+            return Factory::of($this)->instantiate($handler[0], $param);
+        },
+            $this->config('[log]', []));
     }
 }

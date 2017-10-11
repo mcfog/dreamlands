@@ -14,7 +14,7 @@ interface IMessageView
 
     public function mayRefresh($isDefault = false): IMessageView;
 
-    public function mayJump($url, $message = '继续', $isDefault = false): IMessageView;
+    public function mayJump($url, $mxoessage = '继续', $isDefault = false): IMessageView;
 
     public function render(array $data = []): ResponseInterface;
 }

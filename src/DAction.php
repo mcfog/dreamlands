@@ -76,6 +76,7 @@ abstract class DAction extends BoltAction
             'name' => $name,
             'data' => $this->getGlobalViewData(),
         ]);
+
         return $this->attachView($view->setJsData([
             'currentUser' => $this->currentUser
         ]));

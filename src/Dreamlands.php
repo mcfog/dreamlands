@@ -1,8 +1,8 @@
 <?php namespace Dreamlands;
 
-use Doctrine\DBAL\Logging\DebugStack;
 use Dreamlands\Action\Etc\UnicornAction;
 use Dreamlands\Middleware\CurrentUserMiddleware;
+use Dreamlands\Middleware\DebugLoggerMiddleware;
 use Dreamlands\Middleware\SessionMiddelware;
 use Dreamlands\Utility\DContainerAwareTrait;
 use Interop\Http\ServerMiddleware\DelegateInterface;
@@ -23,50 +23,18 @@ class Dreamlands extends BoltApp
     protected function pipeMiddlewares()
     {
         if (!$this->container->envIsProd()) {
-            $this->pipe($this->debugLogger());
+            $this->pipe($this->container->getOrProduce(DebugLoggerMiddleware::class));
         }
 
         /** @noinspection PhpParamsInspection */
         $this
             ->pipe($this->errorHandler())
-            ->pipe($this->container->produce(IpAddress::class))
-            ->pipe($this->container->produce(FigCookiesMiddleware::class))
-            ->pipe($this->container->produce(SessionMiddelware::class))
-            ->pipe($this->container->produce(CurrentUserMiddleware::class));
+            ->pipe($this->container->getOrProduce(IpAddress::class))
+            ->pipe($this->container->getOrProduce(FigCookiesMiddleware::class))
+            ->pipe($this->container->getOrProduce(SessionMiddelware::class))
+            ->pipe($this->container->getOrProduce(CurrentUserMiddleware::class));
 
         parent::pipeMiddlewares();
-    }
-
-    /**
-     * @return MiddlewareInterface
-     */
-    protected function debugLogger()
-    {
-        return new class($this->container) implements MiddlewareInterface
-        {
-            use DContainerAwareTrait;
-
-            public function process(ServerRequestInterface $request, DelegateInterface $delegate)
-            {
-                $this->container->logger->info('request', [
-                    'Method' => $request->getMethod(),
-                    'ProtocolVersion' => $request->getProtocolVersion(),
-                    'Uri' => $request->getUri(),
-                    'RequestTarget' => $request->getRequestTarget(),
-                    'Headers' => $request->getHeaders(),
-                    'Body' => $request->getParsedBody(),
-                ]);
-                /**
-                 * @var DContainer $this ->container
-                 */
-                $response = $delegate->process($request);
-                $queries = $this->container->produce(DebugStack::class)->queries;
-                $this->container->logger->info(count($queries) . ' queries executed', $queries);
-
-                return $response;
-            }
-
-        };
     }
 
     /**

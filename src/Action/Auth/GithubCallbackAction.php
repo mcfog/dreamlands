@@ -4,10 +4,9 @@ use Dreamlands\DAction;
 use Dreamlands\Entity\ModeratorEntity;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\Github;
-use Lit\Nexus\Interfaces\IPropertyInjection;
 use Psr\Http\Message\ResponseInterface;
 
-class GithubCallbackAction extends DAction implements IPropertyInjection
+class GithubCallbackAction extends DAction
 {
     const PATH = '/auth/github/callback';
     protected const MSG_LOGIN_FAIL = '登录失败……';
@@ -17,11 +16,16 @@ class GithubCallbackAction extends DAction implements IPropertyInjection
      */
     protected $github;
 
-    public static function getInjectedProperties()
+    /**
+     *
+     * @param Github $github
+     * @return $this
+     */
+    public function injectGithub(Github $github)
     {
-        return [
-            'github' => Github::class,
-            ] + parent::getInjectedProperties();
+        $this->github = $github;
+
+        return $this;
     }
 
     protected function run(): ResponseInterface

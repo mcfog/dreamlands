@@ -13,12 +13,12 @@ return array_merge_recursive([
         ]
     ],
     'container' => [
-        'Stash\Driver\FileSystem:options' => [
-            'path' => __DIR__ . '/data/cache',
+        'Stash\Driver\FileSystem::' => [
+            'options' => ['value', ['path' => __DIR__ . '/data/cache',]],
         ],
         'Predis\Client::' => [
             'parameters' => '',
-            'options' => [],
+            'options' => ['value', []],
         ],
     ],
     'env' => 'dev',
